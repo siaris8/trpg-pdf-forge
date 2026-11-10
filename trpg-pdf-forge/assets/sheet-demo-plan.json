@@ -1,0 +1,20 @@
+{
+  "system": "FIST / 示例",
+  "sourcePages": [14, 15],
+  "attributes": [
+    {"id": "frc", "label": "强横", "min": 1, "max": 4, "default": 3},
+    {"id": "tac", "label": "战术", "min": 1, "max": 4, "default": 2},
+    {"id": "cre", "label": "创造", "min": 1, "max": 4, "default": 4},
+    {"id": "per", "label": "感知", "min": 1, "max": 4, "default": 2}
+  ],
+  "resources": [
+    {"id": "hp", "label": "生命", "maxFormula": "=10+FRC*2"},
+    {"id": "will", "label": "意志", "maxFormula": "=4+CRE"}
+  ],
+  "steps": [
+    {"no": 1, "title": "选职阶"},
+    {"no": 2, "title": "分配属性"},
+    {"no": 3, "title": "选武器"}
+  ],
+  "ambiguities": ["示例数据，不是完整规则"]
+}

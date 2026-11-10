@@ -1,0 +1,15 @@
+# 依赖与构建产物
+node_modules/
+__pycache__/
+*.py[cod]
+*.log
+
+# 工坊运行时生成（项目目录内）
+.trpg/
+work/
+out/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini

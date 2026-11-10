@@ -1,0 +1,443 @@
+{
+  "ok": true,
+  "layoutVersion": 3,
+  "layoutScore": 100,
+  "layoutIssues": [],
+  "layout": {
+    "说明": {
+      "merged": [
+        "A14:H14",
+        "A15:H15",
+        "A16:H16",
+        "A17:H17",
+        "A1:H2",
+        "A3:H3",
+        "A4:H4",
+        "A5:B5",
+        "A6:B7",
+        "A9:H9",
+        "B10:D10",
+        "B11:D11",
+        "B12:D12",
+        "D5:E5",
+        "D6:E7",
+        "E10:H10",
+        "E11:H11",
+        "E12:H12",
+        "G5:H5",
+        "G6:H7"
+      ],
+      "printArea": "'说明'!$A$1:$H$18",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        0,
+        30.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        22.0,
+        22.0,
+        22.0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "车卡步骤": {
+      "merged": [
+        "A10:F10",
+        "A1:H2",
+        "A3:H3",
+        "A8:F8",
+        "A9:F9"
+      ],
+      "printArea": "'车卡步骤'!$A$1:$H$10",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        26.0,
+        26.0,
+        26.0,
+        0,
+        0,
+        0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "人物卡": {
+      "merged": [
+        "A15:H15",
+        "A1:H2",
+        "A20:H20",
+        "A27:H27",
+        "A3:H3",
+        "A4:H4",
+        "A8:H8",
+        "B5:C5",
+        "B6:C6",
+        "F16:H16",
+        "F17:H17",
+        "F18:H18",
+        "F21:H21",
+        "F22:H25",
+        "F9:G9"
+      ],
+      "printArea": "'人物卡'!$A$1:$H$28",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        26.0,
+        26.0,
+        24.0,
+        24.0,
+        25.0,
+        25.0,
+        25.0,
+        25.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        24.0,
+        22.0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "资源": {
+      "merged": [
+        "A1:H2",
+        "A3:H3"
+      ],
+      "printArea": "'资源'!$A$1:$H$10",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        25.0,
+        25.0,
+        25.0,
+        0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "技能": {
+      "merged": [
+        "A1:H2",
+        "A3:H3"
+      ],
+      "printArea": "'技能'!$A$1:$H$15",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        25.0,
+        25.0,
+        25.0,
+        0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "武器": {
+      "merged": [
+        "A1:H2",
+        "A3:H3"
+      ],
+      "printArea": "'武器'!$A$1:$H$9",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        26.0,
+        26.0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    },
+    "法术能力": {
+      "merged": [
+        "A1:H2",
+        "A3:H3"
+      ],
+      "printArea": "'法术能力'!$A$1:$H$6",
+      "freeze": "A5",
+      "widths": [
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5,
+        13.5
+      ],
+      "rowHeights": [
+        26.0,
+        26.0
+      ],
+      "pageSize": "9",
+      "margins": [
+        0.35,
+        0.35
+      ],
+      "gridlines": false
+    }
+  },
+  "file": "D:\\dsh插件开发\\TRPG-Studio-plugin-test-2026-11-08\\trpg-pdf-forge\\assets\\sheet-demo.xlsx",
+  "sheets": [
+    "说明",
+    "车卡步骤",
+    "人物卡",
+    "资源",
+    "技能",
+    "武器",
+    "法术能力",
+    "规则数据"
+  ],
+  "formulas": 27,
+  "formulaOptional": true,
+  "formulaItems": [
+    {
+      "sheet": "车卡步骤",
+      "cell": "G8",
+      "formula": "=COUNTIF(F5:F7,\"完成\")"
+    },
+    {
+      "sheet": "车卡步骤",
+      "cell": "G9",
+      "formula": "=COUNTA(B5:B7)"
+    },
+    {
+      "sheet": "车卡步骤",
+      "cell": "G10",
+      "formula": "=G8&\" / \"&G9"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C10",
+      "formula": "=B10-3"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C11",
+      "formula": "=B11-3"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "G11",
+      "formula": "=SUM(B10:B13)"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C12",
+      "formula": "=B12-3"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "G12",
+      "formula": "=G10-G11"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C13",
+      "formula": "=B13-3"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "B17",
+      "formula": "=HP_Current"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C17",
+      "formula": "=HP_Max"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "B18",
+      "formula": "=Will_Current"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C18",
+      "formula": "=Will_Max"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C22",
+      "formula": "=技能!E5"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C23",
+      "formula": "=技能!E6"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C24",
+      "formula": "=武器!B5"
+    },
+    {
+      "sheet": "人物卡",
+      "cell": "C25",
+      "formula": "=武器!B6"
+    },
+    {
+      "sheet": "资源",
+      "cell": "D5",
+      "formula": "=10+人物卡!B10*2"
+    },
+    {
+      "sheet": "资源",
+      "cell": "D6",
+      "formula": "=4+人物卡!B12"
+    },
+    {
+      "sheet": "资源",
+      "cell": "C8",
+      "formula": "=SUM(C5:C7)"
+    },
+    {
+      "sheet": "资源",
+      "cell": "D8",
+      "formula": "=SUM(D5:D7)"
+    },
+    {
+      "sheet": "技能",
+      "cell": "E5",
+      "formula": "=C5+D5+人物卡!C11"
+    },
+    {
+      "sheet": "技能",
+      "cell": "E6",
+      "formula": "=C6+D6+人物卡!C13"
+    },
+    {
+      "sheet": "技能",
+      "cell": "E7",
+      "formula": "=C7+D7+人物卡!C12"
+    },
+    {
+      "sheet": "技能",
+      "cell": "E8",
+      "formula": "=SUM(E5:E7)"
+    },
+    {
+      "sheet": "武器",
+      "cell": "G5",
+      "formula": "=技能!E5"
+    },
+    {
+      "sheet": "武器",
+      "cell": "G6",
+      "formula": "=人物卡!C12"
+    }
+  ],
+  "namedRanges": [
+    "PC_Name",
+    "HP_Current",
+    "HP_Max",
+    "Will_Current",
+    "Will_Max",
+    "Points_Total",
+    "Points_Used",
+    "Points_Left",
+    "Steps_Done",
+    "Steps_Total"
+  ],
+  "dataValidations": 1,
+  "steps": 3,
+  "resources": 2,
+  "fullCalcOnLoad": true,
+  "calculated": false,
+  "calculationNote": "openpyxl 不计算公式；Excel/WPS 打开时由 fullCalcOnLoad 重算。",
+  "ambiguities": [
+    "示例数据，不是完整规则"
+  ],
+  "errors": []
+}

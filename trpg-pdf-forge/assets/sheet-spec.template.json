@@ -1,0 +1,27 @@
+﻿{
+  "system": "鑷畾涔夎鍒?,
+  "sourcePages": [1],
+  "attributes": [
+    { "id": "frc", "label": "寮烘í", "min": 1, "max": 10, "default": 5, "cost": "瑙勫垯鏁版嵁!B2" }
+  ],
+  "resources": [
+    { "id": "hp", "label": "鐢熷懡", "maxFormula": "=10+FRC*2", "startFormula": "=HP_Max" },
+    { "id": "will", "label": "鎰忓織", "maxFormula": "=5+CRE", "startFormula": "=Will_Max" }
+  ],
+  "derived": [
+    { "id": "defense", "label": "闃插尽", "formula": "=10+TAC" }
+  ],
+  "steps": [
+    { "no": 1, "title": "閫夎亴闃?, "requires": "鏃?, "cost": "0", "sheet": "杞﹀崱姝ラ", "cell": "A5" },
+    { "no": 2, "title": "鍒嗛厤灞炴€?, "requires": "閫夎亴闃?, "cost": "鐐规暟", "sheet": "杞﹀崱姝ラ", "cell": "A6" },
+    { "no": 3, "title": "閫夋鍣?, "requires": "鍒嗛厤灞炴€?, "cost": "鐐规暟", "sheet": "杞﹀崱姝ラ", "cell": "A7" }
+  ],
+  "tables": [
+    { "sheet": "姝﹀櫒", "columns": ["鍚嶇О", "浼ゅ", "灏勭▼", "寮硅嵂", "鐗规€?, "閲嶉噺"] }
+  ],
+  "formulas": [
+    { "sheet": "浜虹墿鍗?, "cell": "D8", "formula": "=SUM(D4:D7)", "purpose": "灞炴€ф€荤偣" }
+  ],
+  "ambiguities": ["鍘熸枃鏈粰鍑鸿礋閲嶄笂闄?]
+}
+

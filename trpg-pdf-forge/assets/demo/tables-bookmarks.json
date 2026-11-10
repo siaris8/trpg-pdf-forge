@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "count": 2,
+  "depth": 1,
+  "pageMode": "UseOutlines",
+  "items": [
+    {
+      "title": "人物卡与装备表",
+      "level": 1,
+      "page": 1
+    },
+    {
+      "title": "原卡：钟表守卫",
+      "level": 1,
+      "page": 2
+    }
+  ],
+  "sourcePdf": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\tables-raw.pdf",
+  "outputPdf": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\tables.pdf",
+  "outline": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\tables-outline.json",
+  "outlineSource": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\tables.html",
+  "sections": 2,
+  "pages": 2
+}

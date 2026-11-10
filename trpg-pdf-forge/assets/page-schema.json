@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "title": "TRPG page JSON",
+  "topLevel": ["src", "kind", "dense", "eyebrow", "h1", "h2", "dek", "opener", "top", "col1", "col2", "bottom", "noToc", "abridged", "perPage"],
+  "blockTypes": ["p", "h2", "h3", "h4", "read", "rule", "note", "info", "table", "figure", "statblock", "list", "quote", "pullquote", "card", "sheet", "display", "footnote"],
+  "requiredBlockFields": {
+    "p": ["text"],
+    "h2": ["text"],
+    "h3": ["text"],
+    "h4": ["text"],
+    "read": ["text"],
+    "rule": ["text"],
+    "note": ["text"],
+    "info": ["text"],
+    "table": ["head", "rows"],
+    "figure": ["src"],
+    "statblock": ["name", "stats"],
+    "list": ["items"],
+    "quote": ["text"],
+    "pullquote": ["text"],
+    "card": ["title"],
+    "sheet": ["name"],
+    "display": ["text"],
+    "footnote": ["text"]
+  }
+}

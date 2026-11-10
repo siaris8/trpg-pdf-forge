@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- 原卡附录模板；复制到 book/，替换所有 {{...}}。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+  <link rel="stylesheet" href="../.trpg/theme.css">
+</head>
+<body>
+  <section class="page">
+    <div class="page-head">
+      <div class="eyebrow">SOURCE CARD · 原卡保留 · P{{SOURCE_PAGE}}</div>
+      <h1>{{TITLE}}</h1>
+      <p class="dek">抽象表见 {{ABSTRACT_REF}}。原卡仅供核对，不按原图重绘。</p>
+    </div>
+
+    <figure class="source-card">
+      <img src="{{IMAGE_PATH}}" alt="{{ALT}}">
+      <figcaption>{{CAPTION}}　原卡页码：p{{SOURCE_PAGE}}。未能确认的字段以 `[待校对]` 标注，不补写数值。</figcaption>
+    </figure>
+
+    <div class="note">
+      <span class="label">NOTE · 保留理由</span>
+      <p>{{REASON}}</p>
+    </div>
+  </section>
+</body>
+</html>

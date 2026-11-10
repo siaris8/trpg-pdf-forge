@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>钟表室 · 难页</title>
+  <link rel="stylesheet" href="../theme.css">
+  <style>
+    .clock-art { background: transparent; }
+    .clock-art img { display: block; width: 100%; height: auto; }
+    .tight p { margin-bottom: 2.2mm; }
+    .tight .table { margin-top: 2mm; margin-bottom: 2.4mm; }
+    .tight .page-head { margin-bottom: 4mm !important; padding-bottom: 2.4mm !important; }
+    .tight .statblock { margin-bottom: 3mm; }
+    .tight .card { margin: 3mm 0; }
+    .tight .note { margin: 3mm 0; }
+  </style>
+</head>
+<body>
+  <section class="page tight">
+    <div class="page-head" style="margin-bottom:5mm;padding-bottom:3mm">
+      <div class="eyebrow">FIST · PUBLIC DEMO · LAYOUT PROOF 02 · HARD PAGE</div>
+      <h1 style="font-size:27pt">钟表室</h1>
+      <p class="dek">十二扇门。没有钟。每一扇门都在走秒。</p>
+    </div>
+
+    <div class="columns">
+      <div class="col">
+        <p>钟表室的墙是温的。门后传来一只极大的钟在倒数的声音。房间里没有钟，只有十二扇一模一样的门；每过一秒，其中一扇就向内凹进一毫米。</p>
+        <div class="note">
+          <span class="label">READ · 朗读</span>
+          <p>你们听见钟声的时候，钟已经敲完了。现在它开始倒着走。</p>
+        </div>
+        <table class="table compact">
+          <caption>表 1 · 钟表异常 d6</caption>
+          <thead>
+            <tr><th style="width:13%" class="center">d6</th><th>异常</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="center">1</td><td>你的影子晚到一秒。</td></tr>
+            <tr><td class="center">2</td><td>一扇门打开，后面还是这间房。</td></tr>
+            <tr><td class="center">3</td><td>口袋里所有的钟都停在 11:59。</td></tr>
+            <tr><td class="center">4</td><td>房间记得一场你还没开始的对话。</td></tr>
+            <tr><td class="center">5</td><td>星光绕过一个站着的人。</td></tr>
+            <tr><td class="center">6</td><td>钟敲了第十三下。</td></tr>
+          </tbody>
+        </table>
+        <p class="small">每个异常只发生一次；如果重复掷出，改为“门向内凹进一毫米”并让危险 +1。</p>
+      </div>
+
+      <div class="col">
+        <div class="statblock">
+          <div class="tagline">THE CLOCK WARDEN · 钟表守卫</div>
+          <div class="name">钟表守卫</div>
+          <div class="stats">
+            <div><span>生命</span><span>8</span></div>
+            <div><span>护甲</span><span>1</span></div>
+            <div><span>攻击</span><span>2D6 + TACTICAL</span></div>
+            <div><span>弱点</span><span>镜子</span></div>
+          </div>
+          <p>它不说话。它用房间里最后一个说话者的声音，重复那个人最后说的一句话。</p>
+        </div>
+
+        <table class="table compact">
+          <caption>表 2 · 守卫轮次</caption>
+          <thead>
+            <tr><th style="width:14%" class="center">轮</th><th style="width:34%">守卫</th><th>行动</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="center">1</td><td>分针</td><td>封住东门</td></tr>
+            <tr><td class="center">2</td><td>时针</td><td>检查望远镜</td></tr>
+            <tr><td class="center">3</td><td>秒针</td><td>重置房间</td></tr>
+          </tbody>
+        </table>
+
+        <div class="card">
+          <div class="card-label">NPC · 房间里的人</div>
+          <h3>“第十三声”</h3>
+          <div class="role">失踪的天文学家 / 已经不是人</div>
+          <dl>
+            <dt>想要</dt><dd>有人替她听完第十三声钟。</dd>
+            <dt>害怕</dt><dd>镜子；镜子里没有她。</dd>
+            <dt>知道</dt><dd>地下室的水面能倒着看星。</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns mt-4">
+      <div class="col">
+        <figure class="figure clock-art">
+          <img src="extracted/p004-a47e4361478f.png" alt="从源 PDF 提取的钟表室：十二扇门与钟面插图">
+          <figcaption>源 PDF 插图：十二扇门沿墙排列；中央是唯一的钟面，但房间里没有钟。</figcaption>
+        </figure>
+      </div>
+      <div class="col">
+        <table class="table compact">
+          <caption>表 3 · 战利品</caption>
+          <thead>
+            <tr><th style="width:26%">物品</th><th style="width:18%">类型</th><th>效果</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>黄铜钥匙</td><td>工具</td><td>打开一扇不存在的门</td></tr>
+            <tr><td>星之透镜</td><td>装备</td><td>看见一分钟后的未来</td></tr>
+            <tr><td>十三枚硬币</td><td>消耗品</td><td>每枚买一个诚实的答案</td></tr>
+          </tbody>
+        </table>
+        <div class="rule">
+          <span class="label">RULE · 带走透镜</span>
+          <p>如果特工带走<strong>星之透镜</strong>，守卫会跟出天文台。它从不进入教堂。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

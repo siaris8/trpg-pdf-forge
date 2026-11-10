@@ -1,0 +1,39 @@
+{
+  "source": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\source.en.pdf",
+  "images": [
+    {
+      "file": "assets/demo/extracted/p003-7e601d97a6f3.png",
+      "name": "p003-7e601d97a6f3.png",
+      "pages": [
+        3
+      ],
+      "width": 1000,
+      "height": 1150,
+      "bytes": 74701,
+      "sha256": "7e601d97a6f39e28bd8ea1552a17b26e5fea6d57349efe48629ed3c896d11bb0",
+      "kind": "illustration",
+      "note": "preferred for a figure, chapter opener or NPC/room art",
+      "use": "review"
+    },
+    {
+      "file": "assets/demo/extracted/p004-a47e4361478f.png",
+      "name": "p004-a47e4361478f.png",
+      "pages": [
+        4
+      ],
+      "width": 1200,
+      "height": 700,
+      "bytes": 50177,
+      "sha256": "a47e4361478f12da4c710168976ad78f3fdda60eed138f3542b34ae529b04b97",
+      "kind": "illustration",
+      "note": "preferred for a figure, chapter opener or NPC/room art",
+      "use": "review"
+    }
+  ],
+  "counts": {
+    "total": 2,
+    "illustration": 2,
+    "small": 0,
+    "icon": 0
+  }
+}

@@ -1,0 +1,10 @@
+# 默认按文本处理，仓库内存 LF；二进制文件明确标注
+* text=auto
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.ttf binary
+*.otf binary

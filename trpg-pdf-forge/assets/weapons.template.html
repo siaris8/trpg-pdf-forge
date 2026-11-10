@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- 复制到 book/，替换所有 {{...}}；不要保留双花括号。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+  <link rel="stylesheet" href="../.trpg/theme.css">
+</head>
+<body>
+  <section class="page">
+    <div class="page-head">
+      <div class="eyebrow">WEAPONS / GEAR · {{SYSTEM}}</div>
+      <h1>{{TITLE}}</h1>
+      <p class="dek">{{DEK}}</p>
+    </div>
+
+    <table class="table weapons">
+      <caption>{{CAPTION}}</caption>
+      <thead>
+        <tr>
+          <th style="width:22%">名称（类型）</th>
+          <th style="width:13%">伤害</th>
+          <th style="width:12%">射程</th>
+          <th style="width:10%">弹药</th>
+          <th>特性</th>
+          <th style="width:9%" class="num">重量</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>{{NAME_1}}（{{TYPE_1}}）</td><td>{{DAMAGE_1}}</td><td>{{RANGE_1}}</td><td>{{AMMO_1}}</td><td>{{TRAIT_1}}</td><td class="num">{{WEIGHT_1}}</td></tr>
+        <tr><td>{{NAME_2}}（{{TYPE_2}}）</td><td>{{DAMAGE_2}}</td><td>{{RANGE_2}}</td><td>{{AMMO_2}}</td><td>{{TRAIT_2}}</td><td class="num">{{WEIGHT_2}}</td></tr>
+      </tbody>
+    </table>
+
+    <p class="footnote">表内只放可横向比较的数值与短特性；长规则放正文或便签，不塞进单元格。</p>
+  </section>
+</body>
+</html>

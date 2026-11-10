@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "file": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\source.en.pdf",
+  "pages": 4,
+  "width": 594.96,
+  "height": 841.92,
+  "sizes": [
+    {
+      "width": 595.0,
+      "height": 841.9
+    }
+  ],
+  "type3": 0,
+  "fonts": [
+    {
+      "basefont": "AAAAAA+Georgia",
+      "type": "Type0",
+      "ext": "ttf",
+      "pages": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "embeddedFonts": 1,
+  "unembeddedFonts": 0,
+  "textChars": 2417,
+  "images": 2,
+  "bytes": 155920
+}

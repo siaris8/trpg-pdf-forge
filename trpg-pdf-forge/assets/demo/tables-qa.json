@@ -1,0 +1,64 @@
+{
+  "ok": true,
+  "file": "D:\\删除空行\\trpg-pdf-forge\\assets\\demo\\tables.pdf",
+  "pages": 2,
+  "width": 594.96,
+  "height": 841.92,
+  "sizes": [
+    {
+      "width": 595.0,
+      "height": 841.9
+    }
+  ],
+  "type3": 0,
+  "bookmarks": 2,
+  "bookmarksRequired": true,
+  "bookmarkDepth": 1,
+  "bookmarkItems": [
+    {
+      "level": 1,
+      "title": "人物卡与装备表",
+      "page": 1
+    },
+    {
+      "level": 1,
+      "title": "原卡：钟表守卫",
+      "page": 2
+    }
+  ],
+  "pageMode": "UseOutlines",
+  "fonts": [
+    {
+      "basefont": "AAAAAA+MicrosoftYaHei-Bold",
+      "type": "Type0",
+      "ext": "ttf",
+      "pages": [
+        1,
+        2
+      ]
+    },
+    {
+      "basefont": "BAAAAA+MicrosoftYaHei",
+      "type": "Type0",
+      "ext": "ttf",
+      "pages": [
+        1,
+        2
+      ]
+    },
+    {
+      "basefont": "CAAAAA+SimSun",
+      "type": "Type0",
+      "ext": "ttf",
+      "pages": [
+        1,
+        2
+      ]
+    }
+  ],
+  "embeddedFonts": 3,
+  "unembeddedFonts": 0,
+  "textChars": 947,
+  "images": 1,
+  "bytes": 220961
+}

@@ -1,0 +1,3 @@
+- insert:
+    - id: trpg-studio
+      name: '@local/mystery-atelier-ui'

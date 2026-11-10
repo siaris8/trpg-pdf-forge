@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- 替换所有 {{...}} 占位符；不要保留任何双花括号。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+  <link rel="stylesheet" href="../.trpg/theme.css">
+</head>
+<body>
+  <section class="page">
+    <div class="page-head">
+      <div class="eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITLE}}</h1>
+      <p class="dek">{{DEK}}</p>
+    </div>
+
+    <div class="columns">
+      <div class="col">
+        <p>{{BODY}}</p>
+        <aside class="read">
+          <span class="label">READ · 朗读</span>
+          <p>{{READ}}</p>
+        </aside>
+      </div>
+      <div class="col">
+        <div class="rule">
+          <span class="label">RULE · 规则</span>
+          <p>{{RULE}}</p>
+        </div>
+        <table class="table">
+          <caption>{{TABLE_CAPTION}}</caption>
+          <thead><tr><th>{{COL1}}</th><th>{{COL2}}</th></tr></thead>
+          <tbody>
+            <tr><td>{{CELL1}}</td><td>{{CELL2}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

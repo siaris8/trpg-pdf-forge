@@ -1,0 +1,98 @@
+<!doctype html>
+<!-- 复制到 book/，替换所有 {{...}}；不要保留双花括号。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{{NAME}} · 角色卡</title>
+  <link rel="stylesheet" href="../.trpg/theme.css">
+</head>
+<body>
+  <section class="page">
+    <div class="page-head">
+      <div class="eyebrow">PLAYER CHARACTER · {{SYSTEM}}</div>
+      <h1>{{NAME}}</h1>
+      <p class="dek">{{ONE_LINE}}</p>
+    </div>
+
+    <div class="character-sheet">
+      <div class="character-head">
+        <div>
+          <div class="eyebrow">OPERATIVE PROFILE</div>
+          <h2>{{NAME}}</h2>
+          <div class="role">{{ROLE}} · {{LEVEL}}</div>
+        </div>
+        <div class="character-meta">
+          <span><b>玩家</b> {{PLAYER}}</span>
+          <span><b>所属</b> {{FACTION}}</span>
+        </div>
+      </div>
+
+      <div class="character-grid">
+        <div class="sheet-section">
+          <h3>属性</h3>
+          <table class="table compact sheet">
+            <caption>表 1 · 属性</caption>
+            <thead><tr><th>属性</th><th class="center">缩写</th><th class="num">数值</th><th class="num">修正</th></tr></thead>
+            <tbody>
+              <tr><td>强横</td><td class="center">FRC</td><td class="num">{{FRC}}</td><td class="num">{{FRC_MOD}}</td></tr>
+              <tr><td>战术</td><td class="center">TAC</td><td class="num">{{TAC}}</td><td class="num">{{TAC_MOD}}</td></tr>
+              <tr><td>创造</td><td class="center">CRE</td><td class="num">{{CRE}}</td><td class="num">{{CRE_MOD}}</td></tr>
+              <tr><td>感知</td><td class="center">PER</td><td class="num">{{PER}}</td><td class="num">{{PER_MOD}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="sheet-section">
+          <h3>衍生值</h3>
+          <table class="table compact sheet">
+            <caption>表 2 · 衍生值</caption>
+            <thead><tr><th>项目</th><th class="num">当前</th><th class="num">上限/备注</th></tr></thead>
+            <tbody>
+              <tr><td>生命 HP</td><td class="num">{{HP}}</td><td class="num">{{HP_MAX}}</td></tr>
+              <tr><td>护甲</td><td class="num">{{ARMOR}}</td><td class="num">{{ARMOR_NOTE}}</td></tr>
+              <tr><td>意志/资源</td><td class="num">{{WILL}}</td><td class="num">{{WILL_MAX}}</td></tr>
+              <tr><td>弹药</td><td class="num">{{AMMO}}</td><td class="num">{{AMMO_MAX}}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sheet-section">
+        <h3>武器与装备</h3>
+        <table class="table compact weapons">
+          <caption>表 3 · 武器</caption>
+          <thead><tr><th style="width:22%">名称</th><th>伤害</th><th>射程</th><th>弹药</th><th>特性</th></tr></thead>
+          <tbody>
+            <tr><td>{{WEAPON_1}}</td><td>{{DAMAGE_1}}</td><td>{{RANGE_1}}</td><td>{{AMMO_1}}</td><td>{{TRAIT_1}}</td></tr>
+            <tr><td>{{WEAPON_2}}</td><td>{{DAMAGE_2}}</td><td>{{RANGE_2}}</td><td>{{AMMO_2}}</td><td>{{TRAIT_2}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sheet-section">
+        <h3>法术 / 能力</h3>
+        <table class="table compact spells">
+          <caption>表 4 · 法术与能力</caption>
+          <thead><tr><th style="width:22%">名称</th><th>消耗/环阶</th><th>时间</th><th>射程</th><th>效果</th></tr></thead>
+          <tbody>
+            <tr><td>{{SPELL_1}}</td><td>{{COST_1}}</td><td>{{TIME_1}}</td><td>{{RANGE_SPELL_1}}</td><td>{{EFFECT_1}}</td></tr>
+            <tr><td>{{SPELL_2}}</td><td>{{COST_2}}</td><td>{{TIME_2}}</td><td>{{RANGE_SPELL_2}}</td><td>{{EFFECT_2}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sheet-section">
+        <h3>特质与备注</h3>
+        <table class="table compact gear">
+          <caption>表 5 · 特质</caption>
+          <thead><tr><th style="width:24%">特质</th><th>效果</th><th>限制/代价</th></tr></thead>
+          <tbody>
+            <tr><td>{{TRAIT_NAME_1}}</td><td>{{TRAIT_EFFECT_1}}</td><td>{{TRAIT_COST_1}}</td></tr>
+            <tr><td>{{TRAIT_NAME_2}}</td><td>{{TRAIT_EFFECT_2}}</td><td>{{TRAIT_COST_2}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

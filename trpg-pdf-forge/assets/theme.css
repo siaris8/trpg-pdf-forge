@@ -1,0 +1,831 @@
+/* Paper Archive — TRPG book layout
+ * Works with Chrome/Edge print-to-PDF. All colors are book colors, not UI colors.
+ */
+:root {
+  --ink: #171717;
+  --paper: #f1e8d8;
+  --paper-light: #faf5e8;
+  --paper-deep: #e8dcc8;
+  --gold: #c8a45d;
+  --gold-soft: #f5e7b4;
+  --teal: #d6e7e4;
+  --red: #c7352a;
+  --navy: #0b1b2b;
+  --muted: #5f5a51;
+  --line: #2a2722;
+  --serif: "SimSun", "Songti SC", "Source Han Serif SC", serif;
+  --sans: "Microsoft YaHei", "PingFang SC", "Source Han Sans SC", sans-serif;
+  --latin: "Arial Narrow", "Arial", sans-serif;
+}
+
+@page {
+  size: A4;
+  margin: 18mm 18mm 20mm;
+  background: var(--paper);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 10pt;
+  line-height: 1.65;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  text-rendering: geometricPrecision;
+}
+
+p {
+  margin: 0 0 3.2mm;
+  orphans: 2;
+  widows: 2;
+  line-break: strict;
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--sans);
+  color: var(--ink);
+  line-height: 1.18;
+  break-after: avoid;
+  margin: 0;
+}
+
+h1 {
+  font-size: 30pt;
+  letter-spacing: 0.01em;
+}
+
+h2 {
+  font-size: 19pt;
+  margin: 0 0 3mm;
+}
+
+h3 {
+  font-size: 12.5pt;
+  margin: 4mm 0 2mm;
+  letter-spacing: 0.02em;
+}
+
+h4 {
+  font-size: 10.5pt;
+  margin: 3mm 0 1.5mm;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page {
+  position: relative;
+}
+
+/* Start each following page explicitly. This avoids the trailing blank page
+   Chromium creates when the last page also carries break-after: page. */
+.page + .page {
+  break-before: page;
+  page-break-before: always;
+}
+
+.page-head {
+  margin: 0 0 7mm;
+  padding-bottom: 4mm;
+  border-bottom: 0.35mm solid var(--ink);
+}
+
+.eyebrow,
+.kicker,
+.label,
+.smallcaps {
+  /* Mixed Chinese labels must use a CJK-capable stack. A Latin-only stack makes
+     Chrome fall back per glyph and can emit Type3 fonts. */
+  font-family: var(--sans);
+  font-size: 7.2pt;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.eyebrow {
+  color: var(--red);
+  margin-bottom: 2mm;
+}
+
+.dek {
+  font-family: var(--sans);
+  font-size: 10.5pt;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-top: 2.5mm;
+}
+
+.rule-line {
+  width: 100%;
+  height: 0.35mm;
+  background: var(--ink);
+  margin: 3mm 0;
+}
+
+.gold-line {
+  width: 34mm;
+  height: 0.7mm;
+  background: var(--gold);
+  margin: 3mm 0 5mm;
+}
+
+.diamond {
+  display: inline-block;
+  width: 2.6mm;
+  height: 2.6mm;
+  background: var(--red);
+  transform: rotate(45deg);
+  margin-right: 2mm;
+  vertical-align: 0.2mm;
+}
+
+.section-opener {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 242mm;
+  padding-bottom: 8mm;
+}
+
+.section-opener .number {
+  font-family: var(--latin);
+  font-size: 56pt;
+  font-weight: 700;
+  line-height: 0.9;
+  color: var(--gold);
+  margin-bottom: 5mm;
+}
+
+.section-opener h1 {
+  font-size: 38pt;
+  max-width: 150mm;
+}
+
+.section-opener .lede {
+  font-family: var(--sans);
+  font-size: 11pt;
+  color: var(--muted);
+  max-width: 120mm;
+  margin-top: 4mm;
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8mm;
+  align-items: flex-start;
+}
+
+/* Column count follows the number of .col children: 1 fills the row, 2 split
+   it, 3 split it into thirds. This keeps 1/2/3-column pages from leaving an
+   empty grid slot when the child count and the CSS track count disagree. */
+.columns > .col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.columns.three {
+  gap: 6mm;
+}
+
+.col {
+  min-width: 0;
+}
+
+.span-2 {
+  flex: 1 1 100%;
+}
+
+.full {
+  width: 100%;
+}
+
+.keep {
+  break-inside: avoid;
+}
+
+/* Read-aloud box */
+.read {
+  background: var(--paper-light);
+  border-left: 1.3mm solid var(--gold);
+  padding: 3.2mm 4mm 2.2mm;
+  margin: 4mm 0;
+  font-size: 9.2pt;
+  line-height: 1.72;
+  color: #2b2721;
+  break-inside: avoid;
+}
+
+.read .label {
+  display: block;
+  margin-bottom: 1.8mm;
+  color: var(--gold);
+}
+
+.read p:last-child {
+  margin-bottom: 0;
+}
+
+.read em {
+  font-style: italic;
+}
+
+/* Rule bar */
+.rule {
+  background: var(--ink);
+  color: var(--paper-light);
+  padding: 3.2mm 4mm 2.8mm;
+  margin: 4mm 0;
+  break-inside: avoid;
+}
+
+.rule .label {
+  display: block;
+  color: var(--gold);
+  margin-bottom: 1.5mm;
+}
+
+.rule p {
+  margin-bottom: 0;
+  font-family: var(--sans);
+  font-size: 9.4pt;
+  line-height: 1.55;
+}
+
+.rule strong {
+  color: var(--gold-soft);
+}
+
+/* Note */
+.note {
+  background: var(--gold-soft);
+  border: 0.25mm solid #d9c582;
+  padding: 2.8mm 3.8mm 2mm;
+  margin: 4mm 0;
+  font-size: 8.8pt;
+  line-height: 1.55;
+  break-inside: avoid;
+}
+
+.note .label {
+  display: block;
+  color: #7c5b12;
+  margin-bottom: 1.2mm;
+}
+
+.note p:last-child {
+  margin-bottom: 0;
+}
+
+.info {
+  background: var(--teal);
+  padding: 3mm 4mm 2mm;
+  margin: 4mm 0;
+  font-size: 9pt;
+  line-height: 1.58;
+  break-inside: avoid;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 3mm 0 5mm;
+  font-family: var(--sans);
+  font-size: 9pt;
+  line-height: 1.42;
+  break-inside: avoid;
+}
+
+.table caption {
+  caption-side: top;
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 0 1.6mm;
+}
+
+.table th {
+  background: var(--ink);
+  color: var(--paper-light);
+  font-weight: 700;
+  text-align: left;
+  padding: 2.2mm 2.5mm;
+  border: 0.2mm solid var(--ink);
+  vertical-align: bottom;
+}
+
+.table td {
+  padding: 2mm 2.5mm;
+  border-bottom: 0.2mm solid #cbbfa9;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: rgba(232, 220, 200, 0.48);
+}
+
+.table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table .center {
+  text-align: center;
+}
+
+.table .nowrap {
+  white-space: nowrap;
+}
+
+.table.compact {
+  font-size: 8.6pt;
+}
+
+.table.compact td,
+.table.compact th {
+  padding: 1.6mm 2mm;
+}
+
+.table.wide {
+  font-size: 8.5pt;
+}
+
+/* Character / weapon / spell tables */
+.table.sheet {
+  font-size: 8.8pt;
+  margin-bottom: 3mm;
+}
+
+.table.sheet td,
+.table.sheet th {
+  padding: 1.5mm 1.8mm;
+}
+
+.table.weapons {
+  font-size: 8.5pt;
+}
+
+.table.spells {
+  font-size: 8.5pt;
+}
+
+.table.gear {
+  font-size: 8.6pt;
+}
+
+.table.weapons td,
+.table.spells td,
+.table.gear td {
+  padding: 1.5mm 1.8mm;
+}
+
+.table.sheet .num,
+.table.weapons .num,
+.table.spells .num,
+.table.gear .num {
+  font-variant-numeric: tabular-nums;
+}
+
+.table.sheet caption,
+.table.weapons caption,
+.table.spells caption,
+.table.gear caption {
+  font-size: 6.8pt;
+}
+
+/* Stat block */
+.statblock {
+  background: var(--navy);
+  color: var(--paper-light);
+  padding: 4mm 4.5mm;
+  margin: 4mm 0;
+  break-inside: avoid;
+}
+
+.statblock .name {
+  font-family: var(--sans);
+  font-size: 15pt;
+  font-weight: 700;
+  color: var(--paper-light);
+  margin-bottom: 1.5mm;
+}
+
+.statblock .tagline {
+  font-family: var(--sans);
+  font-size: 7pt;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 3mm;
+}
+
+.statblock .stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5mm 5mm;
+  margin: 2.5mm 0;
+  font-family: var(--sans);
+  font-size: 8.8pt;
+}
+
+.statblock .stats div {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 0.2mm solid rgba(250, 245, 232, 0.25);
+  padding-bottom: 1mm;
+}
+
+.statblock .stats span:first-child {
+  color: var(--gold);
+}
+
+.statblock p {
+  font-size: 8.8pt;
+  line-height: 1.55;
+  margin: 2mm 0 0;
+}
+
+/* NPC / room cards */
+.card {
+  border: 0.3mm solid var(--ink);
+  background: var(--paper-light);
+  padding: 3.2mm 3.6mm;
+  margin: 4mm 0;
+  break-inside: avoid;
+}
+
+.card .card-label {
+  font-family: var(--sans);
+  font-size: 6.8pt;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 1.2mm;
+}
+
+.card h3 {
+  margin: 0 0 1.2mm;
+  font-size: 13pt;
+}
+
+.card .role {
+  font-family: var(--sans);
+  font-size: 8.5pt;
+  color: var(--muted);
+  margin-bottom: 2mm;
+}
+
+.card dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 22mm minmax(0, 1fr);
+  gap: 1mm 2mm;
+  font-size: 8.6pt;
+  line-height: 1.45;
+}
+
+.card dt {
+  color: var(--muted);
+  font-family: var(--sans);
+}
+
+.card dd {
+  margin: 0;
+}
+
+/* Character sheet */
+.character-sheet {
+  border: 0.35mm solid var(--ink);
+  background: var(--paper-light);
+  padding: 4mm 4.5mm 3mm;
+  margin: 4mm 0;
+}
+
+.character-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6mm;
+  border-bottom: 0.35mm solid var(--ink);
+  padding-bottom: 2.5mm;
+  margin-bottom: 3.5mm;
+}
+
+.character-head h2 {
+  font-size: 21pt;
+  margin: 0 0 1mm;
+}
+
+.character-head .role {
+  font-family: var(--sans);
+  font-size: 9pt;
+  color: var(--muted);
+}
+
+.character-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1mm;
+  font-family: var(--sans);
+  font-size: 8pt;
+  color: var(--muted);
+  text-align: right;
+  min-width: 38mm;
+}
+
+.character-meta b {
+  color: var(--ink);
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 4mm;
+  align-items: start;
+}
+
+.character-sheet h3 {
+  margin: 1mm 0 1.6mm;
+  font-size: 11pt;
+}
+
+.sheet-section {
+  margin-bottom: 2mm;
+}
+
+.sheet-section .table {
+  margin-top: 0;
+  margin-bottom: 2mm;
+}
+
+.character-sheet .note {
+  margin: 2mm 0 0;
+}
+
+/* Source card appendix */
+.source-card {
+  margin: 5mm 0;
+  padding: 3mm;
+  border: 0.3mm solid var(--ink);
+  background: var(--paper-light);
+  break-inside: avoid;
+}
+
+.source-card img {
+  display: block;
+  width: 100%;
+  max-height: 220mm;
+  object-fit: contain;
+  background: #fff;
+}
+
+.source-card figcaption {
+  font-family: var(--sans);
+  font-size: 8pt;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 2mm;
+  padding-top: 1.5mm;
+  border-top: 0.2mm solid #cbbfa9;
+}
+
+.source-card.landscape img {
+  max-height: 175mm;
+}
+
+/* Figure */
+.figure {
+  margin: 4mm 0;
+  break-inside: avoid;
+}
+
+.figure img,
+.figure svg {
+  display: block;
+  width: 100%;
+  max-height: 90mm;
+  object-fit: contain;
+}
+
+.figure figcaption {
+  font-family: var(--sans);
+  font-size: 8pt;
+  line-height: 1.45;
+  color: var(--muted);
+  margin-top: 1.6mm;
+  padding-top: 1.2mm;
+  border-top: 0.2mm solid #cbbfa9;
+}
+
+.figure.full-bleed {
+  margin-left: calc(-1 * 18mm);
+  margin-right: calc(-1 * 18mm);
+  width: calc(100% + 36mm);
+}
+
+.figure.full-bleed img {
+  max-height: 120mm;
+}
+
+/* Pull quote */
+.pullquote {
+  border-left: 1mm solid var(--gold);
+  padding: 1mm 0 1mm 5mm;
+  margin: 6mm 0;
+  font-family: var(--sans);
+  font-size: 15pt;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.pullquote cite {
+  display: block;
+  font-family: var(--sans);
+  font-size: 7pt;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 2mm;
+}
+
+/* TOC */
+.toc {
+  margin-top: 8mm;
+}
+
+.toc-row {
+  display: grid;
+  grid-template-columns: 16mm minmax(0, 1fr) 12mm;
+  gap: 3mm;
+  align-items: baseline;
+  padding: 1.6mm 0;
+  border-bottom: 0.2mm dotted #b9ad98;
+  font-size: 9.4pt;
+}
+
+.toc-row .part {
+  font-family: var(--sans);
+  font-size: 7pt;
+  letter-spacing: 0.12em;
+  color: var(--red);
+}
+
+.toc-row .title {
+  font-family: var(--sans);
+}
+
+.toc-row .page-number {
+  text-align: right;
+  font-family: var(--latin);
+  color: var(--muted);
+}
+
+/* Cover */
+.cover {
+  width: 210mm;
+  height: 297mm;
+  background: var(--navy);
+  color: var(--paper-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.cover .cover-inner {
+  position: absolute;
+  inset: 0;
+  padding: 22mm 20mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cover .cover-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cover .cover-kicker {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.cover .diamond-lg {
+  width: 18mm;
+  height: 18mm;
+  background: var(--red);
+  transform: rotate(45deg);
+}
+
+.cover .cover-title {
+  font-family: var(--latin);
+  font-size: 60pt;
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  max-width: 160mm;
+}
+
+.cover .cover-cn {
+  font-family: var(--sans);
+  font-size: 28pt;
+  font-weight: 700;
+  margin-top: 5mm;
+  color: var(--paper);
+}
+
+.cover .cover-sub {
+  font-family: var(--sans);
+  font-size: 11pt;
+  line-height: 1.6;
+  color: var(--paper);
+  max-width: 100mm;
+  margin-top: 4mm;
+}
+
+.cover .cover-bottom {
+  font-family: var(--sans);
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.cover .cover-art {
+  position: absolute;
+  right: -8mm;
+  bottom: 22mm;
+  width: 118mm;
+  opacity: 0.95;
+}
+
+/* Footer note and small print */
+.small {
+  font-size: 8pt;
+  color: var(--muted);
+}
+
+.footnote {
+  font-size: 7.8pt;
+  line-height: 1.45;
+  color: var(--muted);
+  border-top: 0.2mm solid #cbbfa9;
+  padding-top: 1.6mm;
+  margin-top: 4mm;
+}
+
+/* Utility */
+.mt-2 { margin-top: 2mm; }
+.mt-4 { margin-top: 4mm; }
+.mt-6 { margin-top: 6mm; }
+.mb-0 { margin-bottom: 0; }
+.text-center { text-align: center; }
+.muted { color: var(--muted); }
+.red { color: var(--red); }
+.gold { color: var(--gold); }
+.sans { font-family: var(--sans); }
+.latin { font-family: var(--latin); }
+.no-break { break-inside: avoid; }
+.page-break { break-after: page; }
+
+@media print {
+  body {
+    margin: 0;
+  }
+  .page + .page {
+    break-before: page;
+    page-break-before: always;
+  }
+}
