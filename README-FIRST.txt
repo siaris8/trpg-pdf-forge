@@ -1,4 +1,4 @@
-﻿TRPG 翻译工坊 · 插件测试包
+TRPG 翻译工坊 · 插件测试包
 版本：2.0.1 / 2026-11-08
 
 这个包是 DeepSeek Harness 的插件源码目录。
@@ -69,7 +69,7 @@
 版本 1.6.1：维护版（功能与 1.6.0 相同）
 - 版本号只从 package.json 读取，index.js / client.js / README 不再各存一份。
 - Python 辅助脚本设置 PYTHONDONTWRITEBYTECODE=1，不再往 assets/ 写 __pycache__。
-- test/make-demo-project.mjs 不再写死 D:/删除空行/...，支持命令行参数和 TRPG_STUDIO_ROOT。
+- test/make-demo-project.mjs 不再写死旧工作区路径，支持命令行参数和 TRPG_STUDIO_ROOT。
 - 测试包不再打包含 __pycache__。
 
 版本 1.6.0：Excel 人物卡版式重做
