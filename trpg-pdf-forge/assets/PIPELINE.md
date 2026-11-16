@@ -63,3 +63,13 @@ BRIEF.md → 翻译页 JSON → PROOF-BRIEF.md → 校对 → PROOF.json
 - 校对失败：修页 JSON → 更新 PROOF → batch-check。
 - 术语失败：补 `glossary.csv` → `term-check.py --all` → 重跑 batch-check。
 - 最终构建要求所有批次 PROOF 有效。
+
+## 车卡项目（独立于 PDF）
+
+- 源语言可为 `de`（德语）/`pl`（波兰语）/`en`/`zh-CN`，目标默认 `zh-CN`。
+- 先 `sheet-extract.py --json --lang <sourceLang>` 生成 `work/source.json`。
+- `pregens.py detect` 标记 Quickstart/模组预设角色章节；Agent 写 `work/pregens.json`。
+- `pregens.py build` 输出 `out/pregens.xlsx`（≤8）或 `out/pregens/` + `INDEX.xlsx`（>8）。
+- 基础空白卡始终是 `out/character-sheet.xlsx`，不与预设卡混放。
+- `sheet-check.py --mode all` 同时检查基础卡和预设卡；`SHEET-QA.json` 的 `base.ok` 与 `pregens.ok` 都必须为 true。
+- 德语源保留 `ä ö ü ß`；术语表 source 用德语；具体见 `SHEET-GUIDE.md` / `PREGEN-GUIDE.md`。

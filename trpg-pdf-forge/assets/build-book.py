@@ -494,7 +494,8 @@ def main() -> int:
             source_map = json.loads(source_map_path.read_text(encoding="utf-8-sig"))
         except Exception:
             source_map = {}
-        audit = audit_specs(root, specs, source_map)
+        project_meta = json.loads((root / "project.json").read_text(encoding="utf-8-sig")) if (root / "project.json").exists() else {}
+        audit = audit_specs(root, specs, source_map, source_lang=project_meta.get("sourceLang") or "en")
         errors.extend(audit["errors"])
         warnings.extend(audit["warnings"])
         glossary_path = (root / args.glossary) if args.glossary else None

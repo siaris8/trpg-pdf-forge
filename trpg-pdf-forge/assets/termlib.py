@@ -22,10 +22,10 @@ def read_json(path, fallback=None):
         raise
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
-LATIN = re.compile(r"[A-Za-z]")
+LATIN = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿĀ-ž]")
 LIST_LABEL = re.compile(r"^\*\*(.+?)\*\*\s*(?:（[^）]*）|\([^)]*\))?\s*[：:]")
-PROPER_PAGE = re.compile(r"(backers|kickstarter|index|glossary|contents|credits|filmography)", re.I)
-FOOTNOTE = re.compile(r"(沿用原书英文名|英文名见|保留英文名|保留原文英文|英文名沿用)")
+PROPER_PAGE = re.compile(r"(backers|kickstarter|index|glossary|contents|credits|filmography|spis treści|indeks|glosariusz)", re.I)
+FOOTNOTE = re.compile(r"(沿用原书英文名|英文名见|保留英文名|保留原文英文|英文名沿用|Originalnamen beibehalten|Namen im Original|englische Namen|oryginalne nazwy|nazwy w oryginale|pozostaw.*oryginał)", re.I)
 ROMAN = r"(?:I{1,3}|IV|V|VI|VII|VIII|IX|X)"
 RANK = re.compile(rf"\s*(?:{ROMAN}|\d+\s*[-–]\s*\d+|{ROMAN}\s*[-–]\s*{ROMAN})\s*$")
 ALLOWED_CATEGORIES = {
@@ -185,7 +185,7 @@ def audit_terms(root, specs: list[dict], glossary_path: Path, source_map: dict |
 
         page_text = str(spec)
         if FOOTNOTE.search(page_text):
-            errors.append(f"{file}: 不得用“沿用原书英文名/保留英文”脚注绕过术语翻译")
+            errors.append(f"{file}: 不得用“沿用原书英文名/保留原文名”脚注绕过术语翻译")
 
         for path, label, text, terms in term_lists(spec):
             category = category_for(label)
@@ -208,7 +208,7 @@ def audit_terms(root, specs: list[dict], glossary_path: Path, source_map: dict |
                     continue
                 if target not in text:
                     errors.append(
-                        f"{file} {path}: 术语列表仍用英文：{term} → 应使用“{target}”"
+                        f"{file} {path}: 术语列表仍用源语言/拉丁文：{term} → 应使用“{target}”"
                     )
 
         opener = spec.get("opener") or {}

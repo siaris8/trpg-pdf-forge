@@ -50,6 +50,22 @@ async function inspect(dir) {
     ? await readJson(path.join(dir, 'out', 'SHEET-QA.json'), null)
     : null;
   const report = await exists(path.join(dir, 'out', 'SHEET-REPORT.md'));
+  const pregenData = (await exists(path.join(dir, 'work', 'pregens.json')))
+    ? await readJson(path.join(dir, 'work', 'pregens.json'), null)
+    : null;
+  const pregenQa = (await exists(path.join(dir, 'out', 'PREGEN-QA.json')))
+    ? await readJson(path.join(dir, 'out', 'PREGEN-QA.json'), null)
+    : null;
+  const pregenFiles = [];
+  if (await exists(path.join(dir, 'out', 'pregens.xlsx'))) pregenFiles.push('out/pregens.xlsx');
+  if (await exists(path.join(dir, 'out', 'pregens'))) {
+    const entries = await fs.readdir(path.join(dir, 'out', 'pregens'));
+    for (const name of entries.filter((item) => item.toLowerCase().endsWith('.xlsx')).sort()) {
+      pregenFiles.push(`out/pregens/${name}`);
+    }
+  }
+  const pregenCount = Array.isArray(pregenData?.pregens) ? pregenData.pregens.length : 0;
+  const pregenOk = pregenCount === 0 || qa?.pregens?.ok === true;
   const review = (await exists(path.join(dir, 'SHEET-REVIEW.json')))
     ? await readJson(path.join(dir, 'SHEET-REVIEW.json'), null)
     : project.review || null;
@@ -57,7 +73,7 @@ async function inspect(dir) {
   let status = 'ready';
   if (!source && !brief) status = 'draft';
   else if (review?.decision === 'changes') status = 'changes';
-  else if (review?.decision === 'approve' && workbook && qaOk && plan && report) status = 'done';
+  else if (review?.decision === 'approve' && workbook && qaOk && pregenOk && plan && report) status = 'done';
   else if (workbook && qa && !qaOk) status = 'warning';
   else if (workbook && qa) status = 'review';
   return {
@@ -69,6 +85,11 @@ async function inspect(dir) {
     workbook,
     qa,
     qaOk,
+    pregenData,
+    pregenQa,
+    pregenCount,
+    pregenFiles,
+    pregenOk,
     report,
     review,
     status,
@@ -79,6 +100,11 @@ async function inspect(dir) {
       workbook,
       qa: Boolean(qa),
       qaOk,
+      pregens: pregenCount > 0,
+      pregenCount,
+      pregenFiles,
+      pregenQa: Boolean(pregenQa),
+      pregenOk,
       report,
       formulas: Number(qa?.formulas || 0),
       namedRanges: Number(qa?.namedRanges || 0),
@@ -90,7 +116,7 @@ async function inspect(dir) {
 
 export function sheetPublic(state, dir) {
   const task = path.join(dir, 'SHEET-TASK.md');
-  const prompt = `请读取并执行这个 Excel 人物卡项目：\n${task}\n\n先分析源规则/译文，再生成可计算的工作簿；完成后运行 sheet-check.py 并停下等待审核。`;
+  const prompt = `请读取并执行这个 Excel 人物卡项目：\n${task}\n\n先分析源规则/译文，生成基础车卡；若 Quickstart/模组有预设角色，按 work/pregens.json 一并提取为独立工作簿；完成后运行 sheet-check.py --mode all 并停下等待审核。`;
   return {
     id: state.project.id,
     title: state.project.title,
@@ -99,6 +125,7 @@ export function sheetPublic(state, dir) {
     updatedAt: state.project.updatedAt,
     notes: state.project.notes,
     sourceLang: state.project.sourceLang,
+    targetLang: state.project.targetLang || 'zh-CN',
     options: state.project.options,
     status: state.status,
     files: state.files,
@@ -123,12 +150,13 @@ export async function createSheetProject(root, assetsDir, input = {}) {
     filter: (source) => !source.split(path.sep).includes('demo'),
   });
   const project = {
-    version: 1,
+    version: 2,
     id,
     kind: 'excel-character-sheet',
     title: clampText(input.title, 120) || '未命名人物卡',
     system: clampText(input.system, 120) || '自定义规则',
     sourceLang: input.sourceLang || 'zh-CN',
+    targetLang: input.targetLang || 'zh-CN',
     notes: clampText(input.notes, 4000),
     options: {
       includeSpells: input.includeSpells !== false,
@@ -218,6 +246,10 @@ export async function writeSheetReview(root, id, decision, note = '') {
     if (!(await exists(path.join(dir, 'out', 'character-sheet.xlsx')))) throw httpError(409, '还没有生成 character-sheet.xlsx。');
     const qa = await readJson(path.join(dir, 'out', 'SHEET-QA.json'), null);
     if (!qa || qa.ok !== true) throw httpError(409, 'SHEET-QA 尚未通过，请先运行 sheet-check.py。');
+    const pregenData = await readJson(path.join(dir, 'work', 'pregens.json'), null);
+    if (Array.isArray(pregenData?.pregens) && pregenData.pregens.length > 0 && qa.pregens?.ok !== true) {
+      throw httpError(409, '预设卡 QA 尚未通过，请运行 sheet-check.py --mode all。');
+    }
     if (!(await exists(path.join(dir, 'work', 'sheet-plan.json')))) throw httpError(409, '缺少 work/sheet-plan.json。');
     if (!(await exists(path.join(dir, 'out', 'SHEET-REPORT.md')))) throw httpError(409, '缺少 out/SHEET-REPORT.md。');
   }

@@ -7,7 +7,7 @@ window.__ModuleLoader__.load({
     const NS = 'trpg-studio';
     const API = '/api/trpg-studio';
     const SHEET_API = '/api/trpg-sheets';
-    const FALLBACK_VERSION = '2.0.1';
+    const FALLBACK_VERSION = '2.2.0';
     const MAX_PDF = 150 * 1024 * 1024;
 
     const zh = {
@@ -173,6 +173,16 @@ window.__ModuleLoader__.load({
       sheetSystemHint: '例如 FIST / COC / 自定义',
       sheetSource: '规则文件',
       sheetSourceHint: 'PDF、DOCX、MD、TXT、CSV、XLSX',
+      sheetSourceLang: '源语言',
+      sheetTargetLang: '目标语言',
+      sheetLangGerman: '德语',
+      sheetLangPolish: '波兰语',
+      sheetLangEnglish: '英语',
+      sheetLangChinese: '中文',
+      sheetBase: '基础车卡',
+      sheetPregens: '预设卡',
+      sheetOpenPregens: '打开预设卡',
+      sheetNoPregens: '无预设卡',
       sheetNotes: '规则摘录 / 译文 / 补充说明',
       sheetNotesHint: '没有文件时，可以直接粘贴规则或车卡要点。',
       sheetCreate: '创建车卡项目',
@@ -415,6 +425,16 @@ window.__ModuleLoader__.load({
       sheetSystemHint: 'e.g. FIST / CoC / custom',
       sheetSource: 'Rule file',
       sheetSourceHint: 'PDF, DOCX, MD, TXT, CSV, XLSX',
+      sheetSourceLang: 'Source language',
+      sheetTargetLang: 'Target language',
+      sheetLangGerman: 'German',
+      sheetLangPolish: 'Polish',
+      sheetLangEnglish: 'English',
+      sheetLangChinese: 'Chinese',
+      sheetBase: 'Base sheet',
+      sheetPregens: 'Pregens',
+      sheetOpenPregens: 'Open pregens',
+      sheetNoPregens: 'No pregens',
       sheetNotes: 'Rules excerpt / translation / notes',
       sheetNotesHint: 'If there is no file, paste the rules or character-creation notes.',
       sheetCreate: 'Create sheet project',
@@ -2101,6 +2121,8 @@ window.__ModuleLoader__.load({
             h('div', { className: 'trpg-field' },
               h('label', { className: 'trpg-label' }, t('sourceLang')),
               h('select', { className: 'trpg-select', value: draft.sourceLang, onChange: (event) => setDraft((current) => ({ ...current, sourceLang: event.target.value })) },
+                h('option', { value: 'de' }, 'Deutsch'),
+                h('option', { value: 'pl' }, 'Polski'),
                 h('option', { value: 'en' }, 'English'),
                 h('option', { value: 'ja' }, '日本語'),
                 h('option', { value: 'other' }, t('unknown')),
@@ -2111,6 +2133,8 @@ window.__ModuleLoader__.load({
               h('select', { className: 'trpg-select', value: draft.targetLang, onChange: (event) => setDraft((current) => ({ ...current, targetLang: event.target.value })) },
                 h('option', { value: 'zh-CN' }, '简体中文'),
                 h('option', { value: 'zh-TW' }, '繁體中文'),
+                h('option', { value: 'de' }, 'Deutsch'),
+                h('option', { value: 'pl' }, 'Polski'),
                 h('option', { value: 'en' }, 'English'),
               ),
             ),
@@ -2176,7 +2200,7 @@ window.__ModuleLoader__.load({
     }
 
     function emptySheetDraft() {
-      return { title: '', system: '', sourceLang: 'zh-CN', notes: '', source: null };
+      return { title: '', system: '', sourceLang: 'de', targetLang: 'zh-CN', notes: '', source: null };
     }
 
     function sheetStatusKey(status) {
@@ -2245,6 +2269,7 @@ window.__ModuleLoader__.load({
               title: draft.title,
               system: draft.system,
               sourceLang: draft.sourceLang,
+              targetLang: draft.targetLang,
               notes: draft.notes,
             }),
           });
@@ -2357,6 +2382,25 @@ window.__ModuleLoader__.load({
               h('label', { className: 'trpg-label' }, t('sheetSystem')),
               h('input', { className: 'trpg-input', value: draft.system, placeholder: t('sheetSystemHint'), onChange: (e) => setDraft((d) => ({ ...d, system: e.target.value })) }),
             ),
+            h('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap' } },
+              h('div', { className: 'trpg-field', style: { flex: 1, minWidth: 150 } },
+                h('label', { className: 'trpg-label' }, t('sheetSourceLang')),
+                h('select', { className: 'trpg-input', value: draft.sourceLang, onChange: (e) => setDraft((d) => ({ ...d, sourceLang: e.target.value })) },
+                  h('option', { value: 'de' }, t('sheetLangGerman')),
+                  h('option', { value: 'pl' }, t('sheetLangPolish')),
+                  h('option', { value: 'en' }, t('sheetLangEnglish')),
+                  h('option', { value: 'zh-CN' }, t('sheetLangChinese')),
+                ),
+              ),
+              h('div', { className: 'trpg-field', style: { flex: 1, minWidth: 150 } },
+                h('label', { className: 'trpg-label' }, t('sheetTargetLang')),
+                h('select', { className: 'trpg-input', value: draft.targetLang, onChange: (e) => setDraft((d) => ({ ...d, targetLang: e.target.value })) },
+                  h('option', { value: 'zh-CN' }, t('sheetLangChinese')),
+                  h('option', { value: 'de' }, t('sheetLangGerman')),
+                  h('option', { value: 'pl' }, t('sheetLangPolish')),
+                ),
+              ),
+            ),
             h('div', { className: 'trpg-field' },
               h('label', { className: 'trpg-label' }, t('sheetSource')),
               h('button', { type: 'button', className: 'trpg-btn wide', onClick: () => sourceInput.current?.click() }, draft.source ? `${draft.source.name} · ${formatBytes(draft.source.size)}` : t('sheetSourceHint')),
@@ -2384,6 +2428,7 @@ window.__ModuleLoader__.load({
               h('div', { style: { display: 'flex', gap: 8, marginTop: 7, flexWrap: 'wrap' } },
                 h('span', { className: `trpg-badge ${status === 'done' ? 'success' : status === 'warning' ? 'danger' : 'warn'}` }, t(sheetStatusKey(status))),
                 h('span', { className: 'trpg-meta' }, selected.source?.name || t('sheetNoSource')),
+                selected.files?.pregens ? h('span', { className: 'trpg-meta' }, `${t('sheetPregens')}: ${selected.files.pregenCount}`) : null,
                 selected.root ? h('span', { className: 'trpg-meta', title: selected.root },
                   root && String(selected.root).toLowerCase() !== String(root).toLowerCase()
                     ? `${t('projectElsewhere')} · ${selected.root}`
@@ -2391,7 +2436,10 @@ window.__ModuleLoader__.load({
               ),
             ),
             h('div', { style: { display: 'flex', gap: 6, flexWrap: 'wrap' } },
-              selected.files?.workbook ? h('a', { className: 'trpg-btn small primary', href: workbook, target: '_blank', rel: 'noopener' }, t('sheetOpen')) : null,
+              selected.files?.workbook ? h('a', { className: 'trpg-btn small primary', href: workbook, target: '_blank', rel: 'noopener' }, t('sheetBase')) : null,
+              selected.files?.pregens && selected.files?.pregenFiles?.length
+                ? h('a', { className: 'trpg-btn small', href: sheetFile(selected, selected.files.pregenFiles[0]), target: '_blank', rel: 'noopener' }, `${t('sheetOpenPregens')} (${selected.files.pregenCount})`)
+                : null,
               h('a', { className: 'trpg-btn small', href: sheetFile(selected, 'SHEET-TASK.md'), target: '_blank', rel: 'noopener' }, t('task')),
               h('button', { type: 'button', className: 'trpg-btn small danger', disabled: busy, onClick: () => setPendingDelete(selected) }, t('deleteProject')),
             ),

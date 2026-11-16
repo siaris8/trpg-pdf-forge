@@ -51,6 +51,33 @@ async function setup() {
   };
 }
 
+test('info does not create a workspace project root', async () => {
+  const base = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-info-lazy-'));
+  const root = path.join(base, 'not-created', 'trpg-projects');
+  const assets = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-info-lazy-assets-'));
+  const previous = process.env.TRPG_STUDIO_ROOT;
+  process.env.TRPG_STUDIO_ROOT = root;
+  const routes = new Map();
+  const ctx = {
+    connection: { fetch: { register(route) { routes.set(route.path, route); return () => {}; } } },
+    effect(callback) { return callback(); },
+    sessions: { list: () => [] },
+  };
+  try {
+    installRoutes(ctx, { assetsDir: assets, version: packageVersion });
+    const response = await routes.get('/api/trpg-studio/info').fetch(new Request('http://dsh.internal/api/trpg-studio/info'));
+    const info = await response.json();
+    assert.equal(info.root, root);
+    assert.equal(info.rootExists, false);
+    assert.equal(await fs.stat(root).then(() => true).catch(() => false), false);
+  } finally {
+    if (previous === undefined) delete process.env.TRPG_STUDIO_ROOT;
+    else process.env.TRPG_STUDIO_ROOT = previous;
+    await fs.rm(base, { recursive: true, force: true });
+    await fs.rm(assets, { recursive: true, force: true });
+  }
+});
+
 test('routes create, upload, finalize, list and serve a project', async () => {
   const env = await setup();
   try {

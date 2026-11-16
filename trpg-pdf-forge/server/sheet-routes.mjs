@@ -72,12 +72,12 @@ async function knownRoot(ctx, value) {
 
 async function info(ctx, assetsDir, version) {
   const current = root(ctx);
-  await fs.mkdir(current, { recursive: true });
   const roots = await knownRoots(ctx);
   return json({
     ok: true,
     version,
     root: current,
+    rootExists: await exists(current),
     roots,
     demo: await exists(path.join(assetsDir, 'sheet-demo.xlsx')),
     maxSourceBytes: MAX_SOURCE_BYTES,

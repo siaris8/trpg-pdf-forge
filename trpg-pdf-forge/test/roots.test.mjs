@@ -98,7 +98,8 @@ test('discovery merges registry, session cwd, explicit legacy bases and persists
   try {
     await fs.mkdir(path.join(home, 'sessions'), { recursive: true });
     for (const workspace of [wsA, wsB, wsC]) {
-      await fs.mkdir(path.join(workspace, 'trpg-projects'), { recursive: true });
+      const root = path.join(workspace, 'trpg-projects');
+      await fs.mkdir(path.join(root, 'project-a'), { recursive: true });
     }
     const ctx = {
       get: (name) => (name === 'workspaceRegistry' ? { list: () => [{ path: wsA }] } : undefined),

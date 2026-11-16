@@ -1,9 +1,15 @@
-﻿# TRPG 翻译工坊
+# TRPG 翻译工坊
 
-当前版本：**2.0.1**（插件页标题旁会显示版本号）
+当前版本：**2.2.0**（插件页标题旁会显示版本号）
 
 开发者：**希亚蕾丝**
 
+> 2.2.0：新增**波兰语源 → 中文**（`sourceLang=pl`，保留 ą ć ę ł ń ó ś ź ż、波兰语术语表/预设卡关键词/校对清单），并清理德语/波兰语提示词的编码问题。
+>
+> 2.1.1：修复**无关工作区被创建 `trpg-projects` / `trpg-sheets` 空目录**；`/info` 改为只读，只有真正新建项目时才建目录，并清理已产生的空根。
+>
+> 2.1.0：车卡支持**预设卡提取**（Quickstart/模组的 pregen/NPC，≤8 张合一个工作簿，>8 张分文件+索引）；新增**德语源 → 中文**（`sourceLang=de`，保留 ä ö ü ß、德语术语表、德语校对清单）。
+>
 > 2.0.1：清理提示词/文档里的项目残留（旧项目页数、固定页段、具体案例），改为按 `survey.totalPages`/总页数动态处理，避免 Agent 把旧项目规模当成当前项目。
 >
 > 2.0.0：每批翻译强制**独立校对**（`PROOF.json` + pageDigest）；状态/门禁/action 收口到 `snapshot → workflow → gates`，阶段增加 `batches/build`；页 JSON 统一 `page-schema.json`；文档收口到 `PIPELINE.md` / `PROOF-GUIDE.md`。
@@ -50,7 +56,7 @@
 1. 解压插件测试包，得到 `trpg-pdf-forge/` 文件夹。**不要只把 zip 文件选进插件管理器。**
 2. 打开 DeepSeek Harness → 设置 → 插件 → 从本地目录安装，选择 `trpg-pdf-forge/`。
 3. 重启 DSH；左侧栏应出现「翻译工坊」。
-4. 打开工坊，标题旁应显示 `v2.0.1`；Excel 车卡面板也会显示 `BETA`。PDF 流程可上传 `trpg-pdf-forge/assets/demo/source.en.pdf` 测试。
+4. 打开工坊，标题旁应显示 `v2.2.0`；Excel 车卡面板也会显示 `BETA`。PDF 流程可上传 `trpg-pdf-forge/assets/demo/source.en.pdf` 测试。
 
 测试设备需要 DSH 桌面版；PDF 打印使用本机 Chrome/Edge；Python 辅助脚本通过 `run-python.mjs` 自动寻找 DSH 自带运行时。不要手动改 profile 的 `package.json`，也不要在 profile 里跑 `pnpm install`。
 

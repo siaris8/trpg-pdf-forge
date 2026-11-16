@@ -86,3 +86,33 @@ node .trpg/run-python.mjs .trpg/sheet-check.py out/character-sheet.xlsx --plan w
 ```
 
 `SHEET-QA.json` 必须 `ok:true`，否则不能通过审核。检查重点是版式/结构；公式只统计，不强制。
+
+## 预设卡（Quickstart / 模组）
+
+如果源书有已经填好的预设角色，必须和空白车卡分开：
+
+- 基础卡仍是 `out/character-sheet.xlsx`，`人物卡` 保持空白/可填；
+- 预设卡写到 `out/pregens.xlsx`（≤8 张）或 `out/pregens/` + `INDEX.xlsx`（>8 张）；
+- 索引区分 `pregen-pc` / `npc`；原型模板不是预设卡；
+- 详细字段、检测和生成命令见 `.trpg/PREGEN-GUIDE.md`；
+- `sheet-check.py --mode all` 同时检查 base 和 pregens。
+
+## 德语源
+
+德语原文 → 中文时：
+
+- `sourceLang=de`、`targetLang=zh-CN`；
+- 保留 `ä ö ü ß`，不要用 ae/oe/ue/ss 替换（除非术语表明确要求）；
+- 德语引号 `„ “ ‚ ‘` 只出现在原文对照，中文译文用中文标点；
+- 德语长复合词按语义翻译，不逐字硬拆；
+- 人名/地名/组织名以 glossary 为唯一来源。
+
+## 波兰语源
+
+波兰语原文 → 中文时：
+
+- `sourceLang=pl`、`targetLang=zh-CN`；
+- 保留 `ą ć ę ł ń ó ś ź ż`，不要转成 `a c e l n o s z z`（除非术语表明确要求）；
+- 波兰语引号 `„ ”` 只出现在原文对照，中文译文用中文标点；
+- 人名/地名/组织名以 glossary 的波兰语 source 为唯一来源；
+- 波兰语长词按语义翻译，不逐字硬拆。

@@ -2,10 +2,10 @@
 
 Two independent signals:
 
-1. English leftovers: a narrative block that is still a full English sentence.
+1. Source-language leftovers: a narrative block that is still a full German,
+   Polish or English sentence.
 2. Low source coverage: translated characters for a source page are far below
    the source page's character count (excluding TOC/index/backers/glossary).
-
 The second check catches omitted paragraphs, not just English text. Thresholds
 are deliberately conservative: errors catch severe omissions; warnings ask the
 agent to look without blocking a build.
@@ -15,13 +15,21 @@ from __future__ import annotations
 import re
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
-LATIN = re.compile(r"[A-Za-z]")
+LATIN = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿĀ-ž]")
 PROSE = re.compile(
     r"\b(the|and|of|to|is|are|you|your|with|that|this|for|from|can|will|not|must|when|if|on|in)\b",
     re.I,
 )
-SKIP_TITLE = re.compile(r"(index|backers|glossary|contents|filmography|title page|credits)", re.I)
-SUMMARY_TITLE = re.compile(r"(briefing|quick reference|速览|速查|摘要)", re.I)
+GERMAN_PROSE = re.compile(
+    r"\b(der|die|das|und|oder|nicht|mit|von|für|ist|sind|wird|werden|kann|können|muss|müssen|ein|eine|einen|dem|den|des|im|am|zum|zur|auf|aus|bei)\b",
+    re.I,
+)
+POLISH_PROSE = re.compile(
+    r"\b(i|w|z|na|do|nie|jest|są|się|oraz|ale|jak|dla|od|po|przez|tym|tego|jako|może|musi|gdy|jeśli|który|która|które)\b",
+    re.I,
+)
+SKIP_TITLE = re.compile(r"(index|backers|glossary|contents|filmography|title page|credits|inhalt|glossar|stichwortverzeichnis|spis treści|indeks|glosariusz)", re.I)
+SUMMARY_TITLE = re.compile(r"(briefing|quick reference|速览|速查|摘要|übersicht|kurzreferenz|szybki start|skróty)", re.I)
 NARRATIVE = {"p", "read", "note", "info", "quote", "pullquote", "statblock", "card"}
 METADATA = {
     "src", "type", "kind", "eyebrow", "h1", "h2", "h3", "h4", "perPage",
@@ -60,7 +68,17 @@ def iter_all_text(value, path=""):
 
 
 def english_leftovers(spec: dict) -> list[dict]:
+    return source_leftovers(spec, "en")
+
+
+def source_leftovers(spec: dict, source_lang: str = "en") -> list[dict]:
     rows = []
+    code = str(source_lang).lower()
+    prose = PROSE
+    if code.startswith("de"):
+        prose = GERMAN_PROSE
+    elif code.startswith("pl"):
+        prose = POLISH_PROSE
     for path, text in iter_narrative(spec):
         value = text.strip()
         if len(value) < 40:
@@ -69,7 +87,7 @@ def english_leftovers(spec: dict) -> list[dict]:
         latin = len(LATIN.findall(value))
         if latin < 30 or cjk / (cjk + latin + 1) >= 0.06:
             continue
-        if not PROSE.search(value):
+        if not prose.search(value):
             continue
         if not any(mark in value for mark in (". ", "! ", "? ")):
             continue
@@ -81,6 +99,7 @@ def english_leftovers(spec: dict) -> list[dict]:
             "path": path,
             "text": value[:160],
             "chars": latin,
+            "lang": "pl" if code.startswith("pl") else ("de" if code.startswith("de") else "en"),
         })
     return rows
 
@@ -100,7 +119,7 @@ def page_records(source_map: dict) -> dict[int, dict]:
     }
 
 
-def audit_specs(root, specs: list[dict], source_map: dict, pages: set[int] | None = None) -> dict:
+def audit_specs(root, specs: list[dict], source_map: dict, pages: set[int] | None = None, source_lang: str = "en") -> dict:
     """Return {errors, warnings, pages} for the given page JSONs."""
     errors: list[str] = []
     warnings: list[str] = []
@@ -114,9 +133,10 @@ def audit_specs(root, specs: list[dict], source_map: dict, pages: set[int] | Non
         }
 
     for spec in specs:
-        for row in english_leftovers(spec):
+        for row in source_leftovers(spec, source_lang):
+            language = {"de": "德语", "pl": "波兰语"}.get(row.get("lang"), "英文")
             errors.append(
-                f"{row['file']} {row['path']}: 仍有整段英文未翻译（{row['text']}…）"
+                f"{row['file']} {row['path']}: 仍有整段{language}未翻译（{row['text']}…）"
             )
 
     by_page: dict[int, list[dict]] = {}

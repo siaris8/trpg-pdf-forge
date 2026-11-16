@@ -39,6 +39,25 @@ async function isDirectory(value) {
   }
 }
 
+/** A root is worth remembering only when it contains a real project directory. */
+export async function rootHasEntries(root, dirname) {
+  const pattern = dirname === PROJECTS_DIRNAME ? /^project-[a-z0-9-]+$/ : /^sheet-[a-z0-9-]+$/;
+  try {
+    const entries = await fs.readdir(root, { withFileTypes: true });
+    return entries.some((entry) => entry.isDirectory() && (entry.name === '.trash' || pattern.test(entry.name)));
+  } catch {
+    return false;
+  }
+}
+
+async function filterExistingRoots(values, dirname) {
+  const kept = [];
+  for (const value of uniquePaths(values)) {
+    if (await rootHasEntries(value, dirname)) kept.push(value);
+  }
+  return kept;
+}
+
 /**
  * Decode one DSH session directory name back into its workspace path.
  * DSH encodes the cwd as `--` + escaped path + `--`, where a non-ASCII code
@@ -169,8 +188,8 @@ function persistKnownRoots(projects, sheets) {
       const current = await readKnownRoots();
       const next = {
         version: ROOTS_VERSION,
-        projects: uniquePaths([...current.projects, ...projects]),
-        sheets: uniquePaths([...current.sheets, ...sheets]),
+        projects: await filterExistingRoots([...current.projects, ...projects], PROJECTS_DIRNAME),
+        sheets: await filterExistingRoots([...current.sheets, ...sheets], SHEET_DIRNAME),
       };
       await writeJsonAtomic(knownRootsPath(), next);
       return next;
@@ -190,13 +209,18 @@ async function rootsFor(ctx, { current, dirname, allowOverride }) {
   const bases = await collectBases(ctx);
   const remembered = dirname === PROJECTS_DIRNAME ? known.projects : known.sheets;
   const roots = await buildRootList({ current, stored: remembered, bases, dirname });
-  // Remember everything we have ever seen so a later session-directory cleanup
-  // cannot make an old workspace vanish again.
+  const visible = [];
+  for (const root of roots) {
+    if (await rootHasEntries(root, dirname) || samePath(root, current)) visible.push(root);
+  }
+  // Remember everything with actual projects, never an empty workspace that was
+  // merely opened once. The current (possibly missing/empty) root stays visible
+  // for project creation but is not persisted until a project exists.
   void persistKnownRoots(
-    dirname === PROJECTS_DIRNAME ? roots : known.projects,
-    dirname === SHEET_DIRNAME ? roots : known.sheets,
+    dirname === PROJECTS_DIRNAME ? visible : known.projects,
+    dirname === SHEET_DIRNAME ? visible : known.sheets,
   );
-  return roots;
+  return visible;
 }
 
 /** Every known PDF project root, newest source first. */

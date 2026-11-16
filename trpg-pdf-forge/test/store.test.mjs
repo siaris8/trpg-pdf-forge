@@ -1,4 +1,4 @@
-﻿import assert from 'node:assert/strict';
+import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -40,7 +40,7 @@ test('creates a project with an empty glossary and a task brief', async () => {
     const task = await fs.readFile(path.join(root, project.id, 'TASK.md'), 'utf8');
     assert.match(task, /PASS 1 ONLY/);
     assert.match(task, /0 Type3/);
-    assert.match(task, /TASK_VERSION: 8/);
+    assert.match(task, /TASK_VERSION: 9/);
   } finally {
     await fs.rm(root, { recursive: true, force: true });
     await fs.rm(assets, { recursive: true, force: true });
@@ -232,7 +232,7 @@ test('status is derived from files, review, and QA', async () => {
     source: true, previewPng: true, hardPng: true, previewPdf: true, hardPdf: true, contact: true,
     pass1PreviewQa: { ok: true, type3: 0 }, pass1HardQa: { ok: true, type3: 0 },
     report: 'report', imageCheck: true, imageCheckOk: true,
-    tablePlan: true, tablePlanOk: true, taskVersion: 8,
+    tablePlan: true, tablePlanOk: true, taskVersion: 9,
   };
   assert.equal(statusOf(project, pass1), 'pass1');
   assert.equal(statusOf({ review: { decision: 'approve' } }, pass1), 'approved');

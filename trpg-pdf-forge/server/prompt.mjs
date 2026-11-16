@@ -84,8 +84,10 @@ const COMMON = `- 不编造规则、数值、表格内容；不确定处标 \`[�
 - 人物卡/武器/法术/装备优先表格；原卡难表格化时“抽象表 + 原图”。
 - 分页按译文体量：单页目标 65%–85%，不足先合并相邻页/前移内容，不按源书页硬切。
 - 大规模书按 \`work/batches.json\` 分批：每批只做 \`work/batches/<id>/BRIEF.md\` 的范围；自动模式 check ok 后立即继续下一批，不要一次翻整本。
-- 每页逐段对照源页，不得只译标题或部分段落；\`batch-check\` 会按源页字数比例和整段英文查漏译。速查/摘要页才可在页 JSON 顶层写 \`abridged: true\`。
-- 术语表先行：每个英文特技/道途/技能/法术/武器/组织名都必须有中文词条；页 JSON 必须使用中文名，禁止整段保留英文，禁止用“沿用原书英文名”脚注绕过；原型名以术语表 \`archetype\` 行为唯一来源。\`term-check.py\` 会检查并生成候选。
+- 每页逐段对照源页，不得只译标题或部分段落；\`batch-check\` 会按源页字数比例和整段源语言查漏译。速查/摘要页才可在页 JSON 顶层写 \`abridged: true\`。
+- 术语表先行：每个源语言特技/道途/技能/法术/武器/组织名都必须有中文词条；页 JSON 必须使用中文名，禁止整段保留源语言，禁止用“沿用原书英文名/保留原文名”脚注绕过；原型名以术语表 \`archetype\` 行为唯一来源。\`term-check.py\` 会检查并生成候选。
+- 德语源：保留 ä ö ü ß 的正确编码；术语表 source 用德语；不要把德语长复合词硬拆成错误中文；德语引号只在源文对照中出现，译文用中文标点。
+- 波兰语源：保留 ą ć ę ł ń ó ś ź ż；术语表 source 用波兰语；不要把波兰语变音字符转成 ASCII；波兰语引号只在源文对照中出现，译文用中文标点。
 - 每批翻译后必须先校对：读 \`PROOF-BRIEF.md\`，逐段对照源页，写 \`PROOF.json\`（checks 全 true、digest 未过期）后才运行 \`batch-check\`；翻译者不能自己勾 PROOF。
 - 完整规则见 \`.trpg/PIPELINE.md\`、\`.trpg/PROOF-GUIDE.md\`、\`.trpg/INSTRUCTIONS.md\`、\`.trpg/STYLE.md\`、\`.trpg/TABLE-GUIDE.md\`、\`.trpg/BOOKMARKS.md\`。`;
 
@@ -106,7 +108,7 @@ export function buildTask(project, dir, gate) {
   if (gate === 'done') {
     return `# ${project.title} — 已交付
 
-> TASK_VERSION: 8
+> TASK_VERSION: 9
 > 当前阶段：**DELIVERED — 已完成**
 
 不要继续改写。若用户提出修改，先读 \`REVIEW.json\` 和 \`out/TRANSLATION-REPORT.md\`，确认范围后再动文件。
@@ -153,9 +155,10 @@ export function buildTask(project, dir, gate) {
 - [ ] 停下，等待用户验收`;
   return `# ${project.title} — ${stage.label}
 
-> TASK_VERSION: 8
+> TASK_VERSION: 9
 > 当前阶段：**${stage.label}**
 > 下一阶段：${stage.next}
+> 源语言：${project.sourceLang || 'en'} / 目标语言：${project.targetLang || 'zh-CN'}
 
 ## 0. 本轮目标
 

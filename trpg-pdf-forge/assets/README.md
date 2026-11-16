@@ -8,7 +8,7 @@
 | `batch-plan.py` | 生成批次、BRIEF、PROOF-BRIEF、刷新进度 | `work/batches.json`、`work/progress.json` |
 | `build-book.py` | 从页 JSON 构建 `body.html` 或单批 HTML | `book/body.html`、`book/batches/*.html` |
 | `batch-check.py` | 结构/漏译/术语/校对门禁 | `CHECK.json`、`progress.json`、`TERM-QA.json` |
-| `proof.py` | 生成/校验批次 PROOF 骨架 | `work/batches/<id>/PROOF.json` |
+| `proof.py` | 生成/校验批次 PROOF 骨架 | `work/batches/<id>/PROOF.json` |\n| `pregens.py` | 预设卡检测/生成（Quickstart/模组） | `work/pregens.json`、`out/pregens*` |\n| `langlib.py` | 语言配置/德语源规范化 | — |
 | `textlib.py` | 漏译/英文段落检查库 | — |
 | `termlib.py` | 术语表覆盖、原型名一致性库 | — |
 | `prooflib.py` | PROOF digest/校验库 | — |

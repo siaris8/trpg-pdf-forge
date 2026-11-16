@@ -130,7 +130,7 @@ export function deriveWorkflow(project, files) {
   if (phase === 'full' && !approved) {
     issues = [{ code: 'book-before-approval', message: '全篇 PDF 已存在，但两页尚未审核通过', file: 'out/book.pdf' }];
   }
-  if (phase !== 'draft' && files.taskVersion !== undefined && files.taskVersion < 8) {
+  if (phase !== 'draft' && files.taskVersion !== undefined && files.taskVersion < 9) {
     issues.push({ code: 'task-version', message: '任务书版本过旧，请刷新任务书', file: 'TASK.md' });
   }
   const progress = files.progress || null;

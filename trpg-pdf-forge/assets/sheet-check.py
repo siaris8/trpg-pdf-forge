@@ -101,6 +101,107 @@ def check_layout(wb) -> tuple[list[str], dict]:
     return issues, details
 
 
+def check_pregen_layout(ws) -> list[str]:
+    issues = []
+    merged = {str(item) for item in ws.merged_cells.ranges}
+    if "A1:H2" not in merged:
+        issues.append("标题未合并 A1:H2")
+    if not ws.print_area:
+        issues.append("未设置 print_area")
+    if ws.sheet_view.showGridLines is not False:
+        issues.append("网格线未关闭")
+    if not ws.freeze_panes:
+        issues.append("未冻结表头")
+    widths = []
+    for col in "ABCDEFGH":
+        width = ws.column_dimensions[col].width
+        if not width or not (11 <= width <= 17):
+            issues.append(f"{col} 列宽不在 11–17")
+        else:
+            widths.append(round(width, 1))
+    if widths and max(widths) - min(widths) > GRID_TOLERANCE:
+        issues.append("A–H 列宽不等")
+    if (ws.row_dimensions[1].height or 0) < 26:
+        issues.append("标题行高不足 26")
+    if (ws["A1"].font.sz or 0) < 16:
+        issues.append("标题字号不足 16")
+    if not is_dark(ws.cell(row=4, column=1)):
+        issues.append("分区/表头缺少深色填充")
+    return issues
+
+
+def inspect_pregens(root: Path) -> dict:
+    data_path = root / "work" / "pregens.json"
+    data = json.loads(data_path.read_text(encoding="utf-8-sig")) if data_path.exists() else {}
+    expected = data.get("pregens") if isinstance(data.get("pregens"), list) else []
+    candidates_path = root / "work" / "pregen-candidates.json"
+    candidates = []
+    if candidates_path.exists():
+        try:
+            candidates = json.loads(candidates_path.read_text(encoding="utf-8-sig")).get("candidates") or []
+        except Exception:  # noqa: BLE001
+            candidates = []
+    if candidates and not expected:
+        return {"ok": False, "count": 0, "files": [], "errors": ["检测到预设角色章节，但 work/pregens.json 为空；请逐张提取或说明为何无预设卡"], "warnings": []}
+    single = root / "out" / "pregens.xlsx"
+    directory = root / "out" / "pregens"
+    files: list[Path] = []
+    if single.exists():
+        files = [single]
+        index = single
+    elif (directory / "INDEX.xlsx").exists():
+        index = directory / "INDEX.xlsx"
+        files = [index] + sorted(item for item in directory.glob("*.xlsx") if item.name != "INDEX.xlsx")
+    elif expected:
+        return {"ok": False, "count": 0, "files": [], "errors": [f"work/pregens.json 有 {len(expected)} 张卡，但没有 out/pregens.xlsx 或 out/pregens/INDEX.xlsx"], "warnings": []}
+    else:
+        return {"ok": True, "count": 0, "files": [], "errors": [], "warnings": ["没有预设卡文件"], "skipped": True}
+
+    errors: list[str] = []
+    warnings: list[str] = []
+    names: list[str] = []
+    try:
+        index_wb = load_workbook(index, data_only=False)
+    except Exception as error:  # noqa: BLE001
+        return {"ok": False, "count": 0, "files": [str(item) for item in files], "errors": [f"索引无法打开：{error}"], "warnings": []}
+    if "预设卡索引" not in index_wb.sheetnames:
+        errors.append("预设卡索引缺少 sheet：预设卡索引")
+    else:
+        index_ws = index_wb["预设卡索引"]
+        if str(index_ws["A4"].value or "") != "编号":
+            errors.append("预设卡索引 A4 不是“编号”")
+    for file in files:
+        try:
+            wb = load_workbook(file, data_only=False)
+        except Exception as error:  # noqa: BLE001
+            errors.append(f"{file.name} 无法打开：{error}")
+            continue
+        for ws in wb.worksheets:
+            if not ws.title.startswith("预设卡-"):
+                if file == single and ws.title == "预设卡索引":
+                    continue
+                warnings.append(f"{file.name} 有非预设卡 sheet：{ws.title}")
+                continue
+            names.append(ws.title)
+            for issue in check_pregen_layout(ws):
+                errors.append(f"{ws.title}: {issue}")
+            if "预设角色" not in str(ws["A1"].value or ""):
+                errors.append(f"{ws.title}: 标题缺少“预设角色”标记")
+    if expected and len(names) < len(expected):
+        errors.append(f"预设卡数量不一致：work/pregens.json {len(expected)}，工作簿 {len(names)}")
+    if len(names) != len(set(names)):
+        errors.append("预设卡 sheet 名称重复")
+    return {
+        "ok": not errors,
+        "count": len(names),
+        "expected": len(expected),
+        "files": [str(item) for item in files],
+        "sheets": names,
+        "errors": errors,
+        "warnings": warnings,
+    }
+
+
 def inspect(path: Path, plan_path: Path) -> dict:
     plan = json.loads(plan_path.read_text(encoding="utf-8-sig")) if plan_path.exists() else {}
     wb = load_workbook(path, data_only=False)
@@ -161,27 +262,55 @@ def inspect(path: Path, plan_path: Path) -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="检查 Excel 人物卡版式与结构")
-    parser.add_argument("xlsx", type=Path)
+    parser = argparse.ArgumentParser(description="检查 Excel 人物卡/预设卡版式与结构")
+    parser.add_argument("xlsx", nargs="?", type=Path)
     parser.add_argument("--plan", type=Path, default=Path("work/sheet-plan.json"))
     parser.add_argument("--json", type=Path, default=None)
+    parser.add_argument("--mode", choices=["base", "pregens", "all"], default="base")
+    parser.add_argument("--root", type=Path, default=Path("."))
     args = parser.parse_args()
-    if not args.xlsx.exists():
-        print(f"找不到工作簿：{args.xlsx}", file=sys.stderr)
-        return 2
-    try:
-        result = inspect(args.xlsx, args.plan)
-    except Exception as error:  # noqa: BLE001
-        print(f"检查失败：{error}", file=sys.stderr)
-        return 2
+    root = args.root.resolve()
+    base = None
+    if args.mode in {"base", "all"}:
+        workbook = args.xlsx or Path("out/character-sheet.xlsx")
+        if not workbook.is_absolute():
+            workbook = root / workbook
+        if not workbook.exists():
+            print(f"找不到工作簿：{workbook}", file=sys.stderr)
+            return 2
+        try:
+            base = inspect(workbook, args.plan if args.plan.is_absolute() else root / args.plan)
+        except Exception as error:  # noqa: BLE001
+            print(f"检查失败：{error}", file=sys.stderr)
+            return 2
+    pregens = inspect_pregens(root) if args.mode in {"pregens", "all"} else None
+    if args.mode == "pregens":
+        result = pregens
+    elif args.mode == "all":
+        result = {
+            **base,
+            "schemaVersion": 2,
+            "mode": "all",
+            "base": base,
+            "pregens": pregens,
+            "ok": bool(base.get("ok") and pregens.get("ok")),
+            "errors": list(base.get("errors") or []) + list(pregens.get("errors") or []),
+        }
+    else:
+        result = {**base, "schemaVersion": 2, "mode": "base", "base": base}
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     if not result["ok"]:
-        print("\nFAIL：" + "；".join(result["errors"]), file=sys.stderr)
+        print("\nFAIL：" + "；".join(result.get("errors") or []), file=sys.stderr)
         return 1
-    print(f"\nOK：版式 {result['layoutScore']} 分，{result['formulas']} 个公式（可选），{result['steps']} 个步骤。")
+    if args.mode == "pregens":
+        print(f"\nOK：预设卡 {result['count']} 张，{len(result['files'])} 个文件。")
+    else:
+        print(f"\nOK：版式 {result['layoutScore']} 分，{result['formulas']} 个公式（可选），{result['steps']} 个步骤。")
+        if pregens:
+            print(f"预设卡：{pregens['count']} 张，{len(pregens['files'])} 个文件。")
     return 0
 
 

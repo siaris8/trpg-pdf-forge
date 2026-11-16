@@ -105,7 +105,8 @@ def main() -> int:
                 if not target.exists():
                     errors.append(f"{spec.get('_file')}: 图片不存在 {image}")
         source_map = source_map or {}
-        text_audit = audit_specs(root, specs, source_map, pages)
+        project_meta = read_json(root / "project.json", {})
+        text_audit = audit_specs(root, specs, source_map, pages, source_lang=project_meta.get("sourceLang") or "en")
         glossary_path = root / "glossary" / "glossary.csv"
         term_audit = audit_terms(root, specs, glossary_path, source_map) if glossary_path.exists() else {
             "ok": True, "errors": [], "warnings": [], "missing": [], "mismatched": [], "candidates": [],

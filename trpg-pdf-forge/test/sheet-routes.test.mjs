@@ -7,6 +7,33 @@ import { installSheetRoutes } from '../server/sheet-routes.mjs';
 
 const packageVersion = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
+test('sheet info does not create the workspace root', async () => {
+  const base = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-sheet-lazy-'));
+  const root = path.join(base, 'not-created', 'trpg-sheets');
+  const assets = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-sheet-lazy-assets-'));
+  const previous = process.env.TRPG_SHEET_ROOT;
+  process.env.TRPG_SHEET_ROOT = root;
+  const routes = new Map();
+  const ctx = {
+    connection: { fetch: { register(route) { routes.set(route.path, route); return () => {}; } } },
+    effect(callback) { return callback(); },
+    sessions: { list: () => [] },
+  };
+  try {
+    installSheetRoutes(ctx, { assetsDir: assets, version: packageVersion });
+    const response = await routes.get('/api/trpg-sheets/info').fetch(new Request('http://dsh.internal/api/trpg-sheets/info'));
+    const info = await response.json();
+    assert.equal(info.root, root);
+    assert.equal(info.rootExists, false);
+    assert.equal(await fs.stat(root).then(() => true).catch(() => false), false);
+  } finally {
+    if (previous === undefined) delete process.env.TRPG_SHEET_ROOT;
+    else process.env.TRPG_SHEET_ROOT = previous;
+    await fs.rm(base, { recursive: true, force: true });
+    await fs.rm(assets, { recursive: true, force: true });
+  }
+});
+
 test('sheet routes expose info and list', async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-sheet-routes-'));
   const assets = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-sheet-routes-assets-'));

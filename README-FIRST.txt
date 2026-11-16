@@ -1,11 +1,29 @@
 TRPG 翻译工坊 · 插件测试包
-版本：2.0.1 / 2026-11-08
+版本：2.2.0 / 2026-11-16
 
 这个包是 DeepSeek Harness 的插件源码目录。
 压缩包内：
 - trpg-pdf-forge/       插件目录（安装这个）
 - sheet-demo-project/   Excel 示例（xlsx + plan + QA + preview）
 - README-FIRST.txt      本说明
+
+版本 2.2.0：波兰语源
+- 新增 sourceLang=pl：波兰语原文 → 中文；保留 ą ć ę ł ń ó ś ź ż。
+- PDF/车卡 UI 增加 Polski；sheet-extract --lang pl；预设卡识别加入波兰语关键词。
+- terms/textlib/PROOF/SHEET/PREGEN 指南增加波兰语检查。
+- 测试 76 项。
+
+版本 2.1.1：停止污染无关工作区
+- `/info` 不再创建 trpg-projects / trpg-sheets；只有真正新建项目时才建目录。
+- 根记录只保存有项目的目录；空目录/失效路径已清理。
+- 新增 cleanup-empty-trg-roots.ps1（默认 dry-run，-Apply 才删除空目录）。
+- 测试 74 项。
+
+版本 2.1.0：预设卡 + 德语源
+- 车卡项目自动检测 Quickstart/模组预设角色，输出 out/pregens.xlsx 或 out/pregens/ 多文件 + 索引。
+- 预设卡（pregen-pc）与 NPC 分开标记，不混入空白「人物卡」。
+- 新增德语源 → 中文：sourceLang=de、保留 ä ö ü ß、德语术语表和校对清单。
+- TASK_VERSION 9 / SHEET_TASK_VERSION 4；测试 72 项。
 
 版本 2.0.1：提示词去项目残留
 - 移除提示词/文档中的旧项目页数、固定页段和具体案例；改为按 survey.totalPages / 总页数动态处理。
@@ -84,7 +102,7 @@ TRPG 翻译工坊 · 插件测试包
 1. 解压整个 zip。
 2. DeepSeek Harness → 设置 → 插件 → 从本地目录安装。
 3. 选择 trpg-pdf-forge 文件夹（不要只选 zip）。
-4. 重启 DSH；标题旁应显示 v2.0.1。
+4. 重启 DSH；标题旁应显示 v2.2.0。
 5. 侧栏两个入口：PDF 翻译、Excel 车卡 · 实验。
 6. 打开工坊应能看到以前工作区里的旧项目（标「其他工作区」）；删除后可在左侧垃圾桶恢复。
 
@@ -96,7 +114,7 @@ Excel 快速测试
 5. 示例：sheet-demo-project/sheet-demo.xlsx；空白模板：trpg-pdf-forge/assets/sheet-template.xlsx。
 
 检查
-- node --test test/*.test.mjs：66 项通过。
+- node --test test/*.test.mjs：76 项通过。
 - sheet-demo：版式 100 分、27 公式、10 命名区域、3 步骤。
 - 无公式副本仍通过（公式可选）。
 - 取消标题合并/打印区域会失败（版式门禁）。
@@ -110,6 +128,10 @@ Excel 快速测试
 开发者：希亚蕾丝
 内部包名：@local/mystery-atelier-ui
 界面名称：TRPG 翻译工坊
+
+
+
+
 
 
 
