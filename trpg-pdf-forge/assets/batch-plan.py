@@ -16,6 +16,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from reportpath import display
+
 from batchlib import compute_progress, load_page_sources, read_json, write_json
 from pageio import load_specs
 
@@ -191,19 +193,25 @@ def write_brief(root: Path, batch: dict, plan: dict, sources: dict[str, list[int
             + (" · 自动" if item.get("source") == "auto" else "")
         )
     image_lines = []
+    seen_images = set()
     for item in source_map.get("images", []) if source_map else []:
         page = int(item.get("page") or 0)
         if page not in page_set:
             continue
+        kind = item.get("kind", "image")
+        key = (page, "page-scan") if kind == "page-scan" else (page, kind, item.get("file") or str(item.get("bbox") or ""))
+        if key in seen_images:
+            continue
+        seen_images.add(key)
         coverage = item.get("coverage")
         detail = item.get("file") or (f"bbox {item.get('bbox')}" if item.get("bbox") else "")
         image_lines.append(
-            f"- p{page} · {item.get('kind', 'image')}"
+            f"- p{page} · {kind}"
             + (f" · 覆盖 {round(float(coverage) * 100)}%" if coverage else "")
             + (f" · {detail}" if detail else "")
         )
-    table_lines = table_lines[:12]
-    image_lines = image_lines[:12]
+    table_lines = table_lines[:8]
+    image_lines = image_lines[:8]
 
     audit_command = (
         "node .trpg/run-python.mjs .trpg/source-map.py source/source.pdf "
@@ -223,6 +231,7 @@ def write_brief(root: Path, batch: dict, plan: dict, sources: dict[str, list[int
 - 源页：{pages[0]}–{pages[1]}（{pages[1] - pages[0] + 1} 页）
 - 当前覆盖：{covered}/{pages[1] - pages[0] + 1}
 - 类型：{batch.get('kind', 'chapter')}
+- 书名：{read_json(root / 'work' / 'TITLE.json', {}).get('titleZh') or '待核验'}
 - 结构清单：{'全量已审计' if trusted else '未全量审计'}
 
 ## 目录切片
@@ -239,8 +248,8 @@ def write_brief(root: Path, batch: dict, plan: dict, sources: dict[str, list[int
 
 ## 产出
 
-- 页 JSON：`work/pages/{batch['id']}-01.json`、`{batch['id']}-02.json`……
-- 每页 JSON 的 `src` 写来源页（可多页，如 `[22,23]`）；规范见 `.trpg/PAGE-SCHEMA.md`。
+- 页 JSON：先写 `work/bundles/{batch['id']}.json`（整批一次），再运行 `split-bundle.py --batch {batch['id']}`。
+- 每页 JSON 的 `src` 写来源页（可多页，如 `[22,23]`）；规范见 `.trpg/PAGE-SCHEMA.md`。目录页可写 `"toc": true` 以获得目录豁免。
 - 翻译完成后**必须校对**：见 `work/batches/{batch['id']}/PROOF-BRIEF.md`，写 `PROOF.json` 后才能 batch-check。
 - 只做本批；不要改其他批次的页 JSON。
 
@@ -276,7 +285,8 @@ node .trpg/run-python.mjs .trpg/batch-check.py --batch {batch['id']}
 
 - 源页：{pages[0]}–{pages[1]}
 - 页 JSON：{', '.join(page_files) if page_files else '（还没有，先翻译）'}
-- 源页图：`work/src/{batch['id']}/page-{pages[0]:03d}.png` 起
+- 源文本：`work/source.txt`（如存在）；源页图只在表格/图文/文本缺失时看
+- 上下文边界：只读本文件、源文本、页 JSON、glossary；不要读 `build-book.py` / `proof.py` / TASK / 完整规则，也不要探索目录。每批目标 ≤12 次工具调用、0–2 张图。
 
 ## 1. 初始化 PROOF
 
@@ -345,7 +355,7 @@ def command_plan(args) -> int:
     plan = {
         "version": 1,
         "createdAt": datetime.now(timezone.utc).isoformat(),
-        "source": str(args.pdf) if args.pdf else "",
+        "source": display(args.pdf) if args.pdf else "",
         "totalSourcePages": total,
         "maxPages": max(4, int(args.max_pages)),
         "batches": batches,

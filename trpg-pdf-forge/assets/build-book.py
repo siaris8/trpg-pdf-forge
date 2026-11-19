@@ -21,6 +21,8 @@ from pathlib import Path
 from prooflib import proof_status
 from termlib import audit_terms
 from textlib import audit_specs
+from titlelib import title_zh, validate as validate_title
+from namelib import check_names
 
 BLOCK_TYPES = {
     "p", "h2", "h3", "h4", "read", "rule", "note", "info", "table", "figure",
@@ -444,13 +446,14 @@ def main() -> int:
     parser.add_argument("--batch", default=None)
     parser.add_argument("--all", action="store_true")
     parser.add_argument("--out", type=Path, default=None)
-    parser.add_argument("--title", default="TRPG")
+    parser.add_argument("--title", default=None)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--source-map", type=Path, default=Path("work/source-map.json"))
     parser.add_argument("--glossary", type=Path, default=Path("glossary/glossary.csv"))
     args = parser.parse_args()
 
     root = args.root.resolve()
+    args.title = (args.title or title_zh(root, "TRPG")).strip() or "TRPG"
     pages_dir = (root / args.pages).resolve()
     specs = load_specs(pages_dir, args.toc_after)
     if not specs:
@@ -459,6 +462,14 @@ def main() -> int:
 
     errors: list[str] = []
     warnings: list[str] = []
+    project_meta = json.loads((root / "project.json").read_text(encoding="utf-8-sig")) if (root / "project.json").exists() else {}
+    if args.all and project_meta.get("titlePolicy") == "strict":
+        title_result = validate_title(root, require_verified=True, check_artifacts=False)
+        if not title_result["ok"]:
+            errors.extend(f"书名门禁：{item}" for item in title_result["errors"])
+        names = check_names(root)
+        if not names["ok"]:
+            errors.extend(f"名称门禁：{item}" for item in names["errors"])
     for spec in specs:
         spec_errors, spec_warnings = validate_spec(spec)
         errors.extend(spec_errors)

@@ -7,6 +7,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 from openpyxl import load_workbook
 
 REQUIRED_SHEETS = ["说明", "车卡步骤", "人物卡", "资源", "技能", "武器", "规则数据"]
@@ -243,7 +245,7 @@ def inspect(path: Path, plan_path: Path) -> dict:
         "layoutScore": max(0, 100 - len(layout_issues) * 4),
         "layoutIssues": layout_issues,
         "layout": layout_details,
-        "file": str(path.resolve()),
+        "file": display(path),
         "sheets": sheets,
         "formulas": len(formulas),
         "formulaOptional": True,

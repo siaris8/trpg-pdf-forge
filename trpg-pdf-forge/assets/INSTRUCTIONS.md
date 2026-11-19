@@ -163,7 +163,9 @@
 
 1. 读 `work/batches/<id>/BRIEF.md`，按其中源页范围渲染页图：
    `node .trpg/run-python.mjs .trpg/render-pages.py source/source.pdf work/src/<id> --pages 19-34 --dpi 150`
-2. 只翻译本批，写成 `work/pages/<id>-*.json`；每页 JSON 的 `src` 写来源页（可多页）；规范见 `.trpg/PAGE-SCHEMA.md`。
+2. 只翻译本批，写一个 `work/bundles/<id>.json`（一次输出整批），再运行：
+   `node .trpg/run-python.mjs .trpg/split-bundle.py --bundle work/bundles/<id>.json --batch <id>`
+   正文默认只读文本；只有表格/图文/文本缺失才读图，每批最多 2 张。
 3. **先校对，不要直接 batch-check**：读 `work/batches/<id>/PROOF-BRIEF.md`，逐段对照源页，修改本批页 JSON；然后：
    ```powershell
    node .trpg/run-python.mjs .trpg/proof.py init --batch <id> --reviewer subagent
@@ -177,7 +179,8 @@
    ```
 5. 失败先在本批修；同一批连续两次修不好才停下报告具体缺口，不要跳过。
    `batch-check` 会查漏译：整段英文直接失败；译文/源页字数低于 20% 直接失败、低于 28% 警告。速查/摘要页若确实只保留要点，在页 JSON 顶层加 `"abridged": true`。
-6. `CHECK.json` 为 `ok:true` 后运行 `batch-plan.py status` 刷新进度，**立即继续下一批**；不要停下等用户。
+6. `CHECK.json` 为 `ok:true` 后运行 `batch-plan.py status` 刷新进度，**立即继续下一批**；默认只读 `CHECK-SUMMARY.json`，失败才读完整 CHECK。
+7. 每批使用全新 subagent；主会话只保留摘要，不保留页全文/页图。每 10 页目标 ≤30 steps、≤20 工具调用、≤2 张图。
 7. 其他批次的页 JSON 不要动；术语/风格与已通过页保持一致。
 8. 若环境有 `subagent`，翻译和校对分别交给不同 subagent（同一工作区），主会话只做构建/检查/进度；没有就顺序做。
 

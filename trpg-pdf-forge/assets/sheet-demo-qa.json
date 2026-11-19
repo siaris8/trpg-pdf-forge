@@ -268,7 +268,7 @@
       "gridlines": false
     }
   },
-  "file": "assets\\sheet-demo.xlsx",
+  "file": "assets/sheet-demo.xlsx",
   "sheets": [
     "说明",
     "车卡步骤",

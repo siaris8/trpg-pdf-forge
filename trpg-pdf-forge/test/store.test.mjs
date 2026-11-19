@@ -40,7 +40,7 @@ test('creates a project with an empty glossary and a task brief', async () => {
     const task = await fs.readFile(path.join(root, project.id, 'TASK.md'), 'utf8');
     assert.match(task, /PASS 1 ONLY/);
     assert.match(task, /0 Type3/);
-    assert.match(task, /TASK_VERSION: 9/);
+    assert.match(task, /TASK_VERSION: 10/);
   } finally {
     await fs.rm(root, { recursive: true, force: true });
     await fs.rm(assets, { recursive: true, force: true });
@@ -101,7 +101,7 @@ test('rejects traversal and non-PDF uploads', async () => {
 test('review gate requires the two pages and blocks Type3 approval', async () => {
   const { root, assets } = await fixture();
   try {
-    const project = await createProject(root, assets, { title: '审核测试' });
+    const project = await createProject(root, assets, { title: '审核测试', titlePolicy: 'legacy' });
     await upload(root, project.id, 'source', 'module.pdf', '%PDF-1.4\n%%EOF\n');
     await finalizeProject(root, project.id);
     await assert.rejects(() => writeReview(root, project.id, 'approve'), /还不能通过/);
@@ -232,7 +232,7 @@ test('status is derived from files, review, and QA', async () => {
     source: true, previewPng: true, hardPng: true, previewPdf: true, hardPdf: true, contact: true,
     pass1PreviewQa: { ok: true, type3: 0 }, pass1HardQa: { ok: true, type3: 0 },
     report: 'report', imageCheck: true, imageCheckOk: true,
-    tablePlan: true, tablePlanOk: true, taskVersion: 9,
+    tablePlan: true, tablePlanOk: true, taskVersion: 10,
   };
   assert.equal(statusOf(project, pass1), 'pass1');
   assert.equal(statusOf({ review: { decision: 'approve' } }, pass1), 'approved');

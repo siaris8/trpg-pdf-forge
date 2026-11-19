@@ -1,12 +1,13 @@
 {
   "ok": true,
-  "source": "assets\\demo\\source.en.pdf",
+  "zeroAllowed": false,
+  "source": "assets/demo/source.en.pdf",
   "sourceImages": 2,
   "sourceUsableIllustrations": 2,
   "sourcePageScans": 0,
   "targets": {
-    "assets\\demo\\preview.pdf": 1,
-    "assets\\demo\\hard.pdf": 1
+    "assets/demo/preview.pdf": 1,
+    "assets/demo/hard.pdf": 1
   },
   "targetImages": 2,
   "required": 1,

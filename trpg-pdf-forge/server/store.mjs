@@ -51,6 +51,8 @@ function defaultProject(id, title, input) {
     version: 1,
     id,
     title,
+    titlePolicy: input?.titlePolicy === 'strict' ? 'strict' : 'legacy',
+    schemaVersion: 3,
     createdAt: now,
     updatedAt: now,
     sourceLang: clampText(input?.sourceLang, 40) || 'en',
@@ -256,6 +258,15 @@ async function inspectFiles(dir) {
   const proof = currentBatch
     ? await readJson(path.join(dir, 'work', 'batches', currentBatch.id, 'PROOF.json'), null)
     : null;
+  const title = (await exists(path.join(dir, 'work', 'TITLE.json')))
+    ? await readJson(path.join(dir, 'work', 'TITLE.json'), null)
+    : null;
+  const titleQa = (await exists(path.join(dir, 'work', 'TITLE-QA.json')))
+    ? await readJson(path.join(dir, 'work', 'TITLE-QA.json'), null)
+    : null;
+  const nameQa = (await exists(path.join(dir, 'work', 'NAME-QA.json')))
+    ? await readJson(path.join(dir, 'work', 'NAME-QA.json'), null)
+    : null;
   const progress = progressRaw && typeof progressRaw === 'object'
     ? {
       ...progressRaw,
@@ -319,6 +330,9 @@ async function inspectFiles(dir) {
     termQa,
     term: termQa,
     proof,
+    title,
+    titleQa,
+    nameQa,
     taskVersion,
     report: reportText,
     type3: Number(qa?.type3 || 0),
@@ -336,7 +350,10 @@ export function publicProject(project, dir, files, status = undefined) {
   const derived = status || statusFromWorkflow(workflow);
   return {
     id: project.id,
-    title: project.title,
+    title: files.title?.titleZh || project.title,
+    titleOriginal: files.title?.titleOriginal || '',
+    titlePolicy: project.titlePolicy || 'legacy',
+    workingTitle: project.title,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
     sourceLang: project.sourceLang,

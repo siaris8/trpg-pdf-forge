@@ -1,4 +1,4 @@
-﻿import assert from 'node:assert/strict';
+import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
@@ -57,6 +57,9 @@ test('term-check rejects an English schtick list, a footnote and a name mismatch
     assert.equal(failed, true);
     const qa = JSON.parse(await fs.readFile(path.join(dir, 'work', 'TERM-QA.json'), 'utf8'));
     assert.equal(qa.ok, false);
+    const summary = JSON.parse(await fs.readFile(path.join(dir, 'work', 'TERM-SUMMARY.json'), 'utf8'));
+    assert.equal(summary.ok, false);
+    assert.equal(summary.errorCount > 0, true);
     assert.ok(qa.errors.some((item) => item.includes('沿用原书英文名')));
     assert.ok(qa.errors.some((item) => item.includes('术语列表仍用源语言/拉丁文')));
     assert.ok(qa.errors.some((item) => item.includes('原型名')));

@@ -20,6 +20,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from reportpath import display
+
 try:
     import pymupdf as fitz
 except ImportError:  # pragma: no cover
@@ -237,15 +239,15 @@ def check(pdf_specs: list[tuple[Path, Path | None]], options: dict) -> dict:
         document = fitz.open(pdf)
         if sections and len(sections) != len(document):
             files.append({
-                "pdf": str(pdf.resolve()),
-                "html": str(html.resolve()) if html else None,
+                "pdf": display(pdf),
+                "html": display(html) if html else None,
                 "warning": f"HTML {len(sections)} 页与 PDF {len(document)} 页不一致，已关闭上下文映射",
             })
             sections = []
         else:
             files.append({
-                "pdf": str(pdf.resolve()),
-                "html": str(html.resolve()) if html else None,
+                "pdf": display(pdf),
+                "html": display(html) if html else None,
                 "warning": None,
             })
         total = len(document)

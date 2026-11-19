@@ -24,11 +24,13 @@ draft → ready → pass1 → changes?
 ## 每批
 
 ```text
-BRIEF.md → 翻译页 JSON → PROOF-BRIEF.md → 校对 → PROOF.json
-→ proof.py verify → build-book --batch → batch-check --batch → 下一批
+BRIEF.md → 翻译页 bundle → split-bundle → PROOF-BRIEF.md → 校对 → PROOF.json
+→ proof.py verify → build-book --batch → batch-check --batch → CHECK-SUMMARY → 下一批
 ```
 
-- 只处理 `progress.current`，已 done 的跳过。
+- 每批用全新 subagent；主会话只保留 CHECK-SUMMARY，不保留页全文。
+- 只读 BRIEF / PROOF-BRIEF / STYLE-MINI / PAGE-SCHEMA；不重读完整规则。
+- 正文默认只读文本；只有表格/图文/文本缺失才读图，每批 ≤2 张。
 - 页 JSON 改动后 PROOF digest 失效，必须重新校对。
 - `batch-check` 同时检查结构、漏译、术语、校对；全过才写 `CHECK.ok=true`。
 
@@ -44,7 +46,11 @@ BRIEF.md → 翻译页 JSON → PROOF-BRIEF.md → 校对 → PROOF.json
 | `work/batches/<id>/BRIEF.md` | 翻译任务 |
 | `work/batches/<id>/PROOF-BRIEF.md` | 校对任务 |
 | `work/batches/<id>/PROOF.json` | 校对签字 + pageDigest |
-| `work/batches/<id>/CHECK.json` | 批次门禁结果 |
+| `work/batches/<id>/CHECK.json` | 完整批次门禁结果 |
+| `work/batches/<id>/CHECK-SUMMARY.json` | 给 Agent/UI 的紧凑摘要 |
+| `work/pages/<batch>-bundle.json` | 一批一次输出的页数据，供 split-bundle 拆分 |
+| `.trpg/STYLE-MINI.md` | 批次阶段精简版式规则 |
+| `.trpg/BATCH-PROTOCOL.md` | 批次上下文纪律与命令 |
 | `work/TERM-QA.json` | 术语表覆盖/原型名一致性 |
 | `out/LAYOUT.json` | 排版体检（提示，不阻断） |
 | `out/QA.json` / `out/BOOKMARKS.json` | 最终 PDF 检查 |
@@ -63,6 +69,13 @@ BRIEF.md → 翻译页 JSON → PROOF-BRIEF.md → 校对 → PROOF.json
 - 校对失败：修页 JSON → 更新 PROOF → batch-check。
 - 术语失败：补 `glossary.csv` → `term-check.py --all` → 重跑 batch-check。
 - 最终构建要求所有批次 PROOF 有效。
+
+## 书名
+
+- pass1 后：读封面/版权页/目录/前言，写 `work/TITLE.json` 草稿；
+- 批次全部完成后：新增 `title-review`；新子代理读书名页/目录/章节标题/摘要，写 `status=verified`、`verifiedAfterRead=true`；
+- `title.py check --require-verified` 通过后才 build；
+- 封面/页眉/TOC/书签/报告/glossary 必须使用 `titleZh`，不能残留工作名。
 
 ## 车卡项目（独立于 PDF）
 

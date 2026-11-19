@@ -6,6 +6,7 @@ export const ACTIONS = {
   revise: { labelKey: 'actionRevise', prompt: 'revise', tone: 'neutral' },
   fix: { labelKey: 'actionFix', prompt: 'fix', tone: 'warn' },
   proof: { labelKey: 'actionProof', prompt: 'proof', tone: 'warn' },
+  title: { labelKey: 'actionTitle', prompt: 'title', tone: 'warn' },
   auto: { labelKey: 'actionAuto', prompt: 'auto', tone: 'primary' },
   build: { labelKey: 'actionBuild', prompt: 'build', tone: 'primary' },
   none: { labelKey: 'actionNone', prompt: null, tone: 'neutral' },

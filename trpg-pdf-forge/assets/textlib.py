@@ -159,7 +159,7 @@ def audit_specs(root, specs: list[dict], source_map: dict, pages: set[int] | Non
         files = by_page.get(page) or []
         if not files or all(str(item.get("kind") or "") == "toc" for item in files):
             continue
-        if any(bool(item.get("abridged")) for item in files):
+        if any(bool(item.get("abridged")) or bool(item.get("toc")) for item in files):
             continue
         translated = sum(text_length(item) for item in files)
         ratio = translated / source_chars

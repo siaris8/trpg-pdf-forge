@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from termlib import audit_terms, read_json, write_candidates
+from termlib import audit_terms, read_json, summarize_terms, write_candidates
 
 
 def load_specs(pages_dir: Path) -> list[dict]:
@@ -32,6 +32,7 @@ def main() -> int:
     parser.add_argument("--glossary", type=Path, default=Path("glossary/glossary.csv"))
     parser.add_argument("--source-map", type=Path, default=Path("work/source-map.json"))
     parser.add_argument("--out", type=Path, default=Path("work/TERM-QA.json"))
+    parser.add_argument("--summary", type=Path, default=Path("work/TERM-SUMMARY.json"))
     parser.add_argument("--write-candidates", type=Path, default=None)
     args = parser.parse_args()
 
@@ -46,6 +47,9 @@ def main() -> int:
     out = (root / args.out) if not args.out.is_absolute() else args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    summary = (root / args.summary) if not args.summary.is_absolute() else args.summary
+    summary.parent.mkdir(parents=True, exist_ok=True)
+    summary.write_text(json.dumps(summarize_terms(result), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     if args.write_candidates:
         target = (root / args.write_candidates) if not args.write_candidates.is_absolute() else args.write_candidates

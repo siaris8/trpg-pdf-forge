@@ -1,4 +1,14 @@
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
+
+function bookTitle(dir, fallback) {
+  try {
+    const value = JSON.parse(readFileSync(path.join(dir, 'work', 'TITLE.json'), 'utf8'));
+    return String(value?.titleZh || '').trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const STAGES = {
   pass1: {
@@ -75,7 +85,11 @@ node .trpg/run-python.mjs .trpg/check-card-plan.py work/table-plan.json --out ou
 node .trpg/run-python.mjs .trpg/export-glossary.py --source glossary/glossary.filled.csv --csv out/GLOSSARY.csv --md out/GLOSSARY.md
 Copy-Item .trpg/REPORT.template.md out/TRANSLATION-REPORT.md
 # 填完报告所有【】占位，不要保留占位符
-node .trpg/run-python.mjs .trpg/render-pages.py out/book.pdf out/pages`;
+node .trpg/run-python.mjs .trpg/render-pages.py out/book.pdf out/pages
+
+# 4) 书名/专名最终核验（填完报告后）
+node .trpg/run-python.mjs .trpg/name-check.py --root .
+node .trpg/run-python.mjs .trpg/title.py check --require-verified`;
 }
 
 const COMMON = `- 不编造规则、数值、表格内容；不确定处标 \`[待校对]\`。
@@ -89,6 +103,7 @@ const COMMON = `- 不编造规则、数值、表格内容；不确定处标 \`[�
 - 德语源：保留 ä ö ü ß 的正确编码；术语表 source 用德语；不要把德语长复合词硬拆成错误中文；德语引号只在源文对照中出现，译文用中文标点。
 - 波兰语源：保留 ą ć ę ł ń ó ś ź ż；术语表 source 用波兰语；不要把波兰语变音字符转成 ASCII；波兰语引号只在源文对照中出现，译文用中文标点。
 - 每批翻译后必须先校对：读 \`PROOF-BRIEF.md\`，逐段对照源页，写 \`PROOF.json\`（checks 全 true、digest 未过期）后才运行 \`batch-check\`；翻译者不能自己勾 PROOF。
+- 书名：pass1 后写 \`work/TITLE.json\` 草稿；全篇批次完成后用独立 title-review 核验并运行 \`title.py check --require-verified\`；封面/页眉/TOC/书签/报告/术语表必须统一书名。
 - 完整规则见 \`.trpg/PIPELINE.md\`、\`.trpg/PROOF-GUIDE.md\`、\`.trpg/INSTRUCTIONS.md\`、\`.trpg/STYLE.md\`、\`.trpg/TABLE-GUIDE.md\`、\`.trpg/BOOKMARKS.md\`。`;
 
 export function buildTask(project, dir, gate) {
@@ -98,7 +113,7 @@ export function buildTask(project, dir, gate) {
   const glossary = win(path.join(dir, 'glossary/glossary.csv'));
   const filled = win(path.join(dir, 'glossary/glossary.filled.csv'));
   const reviewPath = win(path.join(dir, 'REVIEW.json'));
-  const headerArg = String(project.title || 'TRPG').replace(/["\r\n]/g, ' ');
+  const headerArg = String(bookTitle(dir, project.title) || 'TRPG').replace(/["\r\n]/g, ' ');
   const pass1Dir = 'book/pass1';
   const review = project.review || {};
   const reviewBlock = review.decision
@@ -108,7 +123,7 @@ export function buildTask(project, dir, gate) {
   if (gate === 'done') {
     return `# ${project.title} — 已交付
 
-> TASK_VERSION: 9
+> TASK_VERSION: 10
 > 当前阶段：**DELIVERED — 已完成**
 
 不要继续改写。若用户提出修改，先读 \`REVIEW.json\` 和 \`out/TRANSLATION-REPORT.md\`，确认范围后再动文件。
@@ -153,12 +168,13 @@ export function buildTask(project, dir, gate) {
 - [ ] 已生成 \`out/LAYOUT.json\`（偏空页已处理或确认可接受）
 - [ ] \`work/progress.json\` 的 \`translated\` 等于 \`total\`（所有批次 done）
 - [ ] 停下，等待用户验收`;
-  return `# ${project.title} — ${stage.label}
+  return `# ${headerArg} — ${stage.label}
 
-> TASK_VERSION: 9
+> TASK_VERSION: 10
 > 当前阶段：**${stage.label}**
 > 下一阶段：${stage.next}
 > 源语言：${project.sourceLang || 'en'} / 目标语言：${project.targetLang || 'zh-CN'}
+> 书名：**${headerArg}**（以 work/TITLE.json 为准；工作名：${project.title}）
 
 ## 0. 本轮目标
 
@@ -210,17 +226,18 @@ export function promptsFor(project, dir, phase, progress = null) {
   const revise = `我要求修改预览页/难页。请读取并执行：\n${task}\n\n先读 REVIEW.json 的修改意见，只重做这两页，完成后停止。`;
   const plan = `请读取并执行：\n${task}\n\n这本书较大：先运行批次计划（不要翻译正文）：\nnode .trpg/run-python.mjs .trpg/batch-plan.py plan --pdf source/source.pdf --source-map work/source-map.json --pages work/pages --out work/batches.json --progress work/progress.json\n然后为当前批生成说明：\nnode .trpg/run-python.mjs .trpg/batch-plan.py brief <当前批 id>\n完成后停下，等待用户复制下一批任务。`;
   const batch = current
-    ? `我已在工坊通过预览页和难页。请读取 work/batches/${current.id}/BRIEF.md 与 TASK.md，只完成第 ${current.id} 批（${current.title}，源页 ${current.pages?.[0]}–${current.pages?.[1]}）：\n1. 只翻译本批，写成 work/pages/${current.id}-*.json；\n2. 运行 build-book.py --batch ${current.id} 与 batch-check.py --batch ${current.id}；\n3. CHECK.json 为 ok:true 后：自动模式继续下一批；只有用户要求单批时才停下。`
+    ? `我已在工坊通过预览页和难页。请读取 work/batches/${current.id}/BRIEF.md、work/batches/${current.id}/PROOF-BRIEF.md 与 .trpg/BATCH-PROTOCOL.md，只完成第 ${current.id} 批（${current.title}，源页 ${current.pages?.[0]}–${current.pages?.[1]}）：\n1. 用全新 subagent；只读 BRIEF、PROOF-BRIEF、STYLE-MINI、PAGE-SCHEMA，不重读完整 TASK/INSTRUCTIONS/STYLE；\n2. 只翻译本批，写一个 work/bundles/${current.id}.json，再 split-bundle；\n3. 校对写 PROOF.json，运行 build-book.py --batch ${current.id} 与 batch-check.py --batch ${current.id}；\n4. 只读 CHECK-SUMMARY.json；CHECK.ok 后自动下一批；不要在主会话累积页全文。`
     : plan;
   const proof = current
-    ? `请读取 work/batches/${current.id}/PROOF-BRIEF.md 与 TASK.md，只校对第 ${current.id} 批（源页 ${current.pages?.[0]}–${current.pages?.[1]}）。\n1. 逐段对照源图/源文，先查漏译，再查术语、名称、数字、表格、中文表达；\n2. 只改本批页 JSON，然后运行 proof.py init --force（或更新 pageDigest）、填 checks/ok、proof.py verify；\n3. 运行 batch-check.py --batch ${current.id}；CHECK.ok 后停下，不要开始下一批。`
+    ? `请读取 work/batches/${current.id}/PROOF-BRIEF.md 与 .trpg/BATCH-PROTOCOL.md，只校对第 ${current.id} 批（源页 ${current.pages?.[0]}–${current.pages?.[1]}）。\n1. 用全新 subagent；逐段对照源页，先查漏译，再查术语、名称、数字、表格、中文表达；只读 PROOF-BRIEF、源文本、页 JSON、glossary，不读代码/TASK/完整规则；\n2. 只改本批页 JSON，然后运行 proof.py init --force（或更新 pageDigest）、填 checks/ok、proof.py verify；\n3. 运行 batch-check.py --batch ${current.id}；只读 CHECK-SUMMARY.json，CHECK.ok 后停下，不要开始下一批。`
     : `当前没有待校对批次。请读取 progress.json 与 work/batches/*/PROOF-BRIEF.md 后再开始。`;
-  const auto = `请读取并执行 TASK.md。TASK.md 的 FULL 阶段只描述最后的构建门禁；本轮以本指令的批次流程为准，不要直接构建。这是一次性授权：自动完成整本，不要每批等用户输入。\n1) 若 work/source-map.json 的 survey.complete 不为 true：先运行 extract-images.py，再运行 source-map.py --merge，补全整本结构清单（表/图/整页扫描；总页数以 survey.totalPages 为准）。若一次扫描超时，用 --pages 按总页数均分三段 --merge。\n2) 运行 batch-plan.py plan 生成或更新 work/batches.json。\n3) 从 work/progress.json 的 current 开始，按顺序循环，直到所有批次 status 都为 done：\n   - 每批开始前重新读 progress.json；只处理 status != done 的批次，已 done 的批次跳过，不要重翻；\n   - batch-plan.py brief <id>；\n   - render-pages.py --pages <源页范围> 渲染到 work/src/<id>；\n   - 只翻译本批，写 work/pages/<id>-*.json；\n   - 先不要 batch-check：按 PROOF-BRIEF 做独立校对（有 subagent 就用独立 subagent；没有就自己重新对照源页），修改页 JSON 并写 PROOF.json；\n   - proof.py verify、build-book.py --batch <id>、batch-check.py --batch <id>；\n   - 失败先修；ok 后用 batch-plan.py status 更新进度，立即下一批，不要询问用户。\n4) 全部完成后运行 build-book.py --all，再按 TASK 的全篇命令渲染、合并、书签、QA、报告。\n如果当前环境有 subagent，优先每批交给一个 subagent（同一工作区、同一 BRIEF），校对再交给另一个 subagent；没有就顺序做。\n只有同一批连续两次修不好、或源 PDF 不可读时停下并报告具体批次/缺口；不要跳过批次。`;
+  const title = `请读取 work/TITLE.json 与 .trpg/BATCH-PROTOCOL.md，核对书名（不是工作名）。\n1. 读封面/版权页/目录、每章 h1/opener、章节摘要/PROOF、终章/封底；\n2. 填写 titleOriginal、titleZh、sourcePages、contentEvidence、rationale；\n3. 设置 status=verified、verifiedAfterRead=true、reviewer；\n4. 运行 title.py check --require-verified；书名改动后重建封面/页眉/TOC/书签/报告。`;
+  const auto = `请执行 TASK.md 的自动批次协议（先读一次 TASK 的 FULL 段与 .trpg/BATCH-PROTOCOL.md；之后每批不要重读完整 TASK/INSTRUCTIONS/STYLE）。这是一次性授权：自动完成整本，不要每批等用户输入。\n1) 若 work/source-map.json 的 survey.complete 不为 true：先运行 extract-images.py，再运行 source-map.py --merge，补全整本结构清单（表/图/整页扫描；总页数以 survey.totalPages 为准）。若一次扫描超时，用 --pages 按总页数均分三段 --merge。\n2) 运行 batch-plan.py plan 生成或更新 work/batches.json。\n3) 从 work/progress.json 的 current 开始，按顺序循环，直到所有批次 status 都为 done：\n   - 每批开始前重新读 progress.json；只处理 status != done 的批次，已 done 的批次跳过，不要重翻；\n   - batch-plan.py brief <id>；\n   - 用全新 subagent 读 BRIEF、PROOF-BRIEF、STYLE-MINI、PAGE-SCHEMA； \n   - render-pages.py --pages <源页范围> 渲染到 work/src/<id>；正文默认只读文本，只有表格/图文/文本缺失才看图；\n   - 只翻译本批，写一个 work/bundles/<id>.json，再运行 split-bundle.py；\n   - 先不要 batch-check：按 PROOF-BRIEF 做独立校对（有 subagent 就用独立 subagent；没有就自己重新对照源页），修改页 JSON 并写 PROOF.json；\n   - proof.py verify、build-book.py --batch <id>、batch-check.py --batch <id>；\n   - 只读 work/batches/<id>/CHECK-SUMMARY.json；失败先修；ok 后用 batch-plan.py status 更新进度，立即下一批；\n   - 每 10 页目标 ≤30 steps、≤20 工具调用、≤2 张图；超限停下报告，不要继续烧；\n   - 主会话不保留页全文/页图，只保留摘要。\n4) 全部批次完成后，先用全新 title-review subagent 读书名页/目录/章节标题/摘要，更新 work/TITLE.json；运行 name-check.py --root . 与 title.py check --require-verified；通过后再构建全篇。\n5) 构建全篇：读 TASK 的 FULL 段，运行 build-book.py --all，再按 TASK 的全篇命令渲染、合并、书签、QA、报告。\n只有同一批连续两次修不好、源 PDF 不可读、上下文超限或书名未核验时停下并报告具体批次/缺口；不要跳过批次。`;
   const build = `所有批次都已完成。请读取 TASK.md，运行 build-book.py --all 构建 book/body.html，然后按全篇命令渲染、合并、书签、QA、报告；完成后停下等待验收。`;
   const fix = phase === 'full'
     ? `工坊检测到全篇交付不完整。请读取：\n${task}\n\n先读 out/QA.json、out/BOOKMARKS.json、out/TABLE-PLAN.json 和 out/TRANSLATION-REPORT.md，补齐缺失项后再停下等待检查。`
     : `工坊检测到本批/两页问题。请读取：\n${task}\n\n并阅读 out/pass1/REPORT.md、out/pass1/*-qa.json 与 work/batches/*/CHECK.json，先修复 Type3、图片、表格计划、缺页或占位符；修好后再停下等待检查。`;
-  return { start, revise, continue: auto, plan, batch, proof, auto, build, fix, status: phase };
+  return { start, revise, continue: auto, plan, batch, proof, title, auto, build, fix, status: phase };
 }
 
 

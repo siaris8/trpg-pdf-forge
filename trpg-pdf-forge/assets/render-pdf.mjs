@@ -13,6 +13,16 @@ import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+/** Report-safe path: relative to the working directory, else the file name. */
+function displayPath(target) {
+  const resolved = path.resolve(target);
+  const base = process.cwd();
+  if (resolved.startsWith(base + path.sep)) {
+    return path.relative(base, resolved).split(path.sep).join('/');
+  }
+  return path.basename(resolved);
+}
+
 const args = parseArgs(process.argv.slice(2));
 const html = args.html;
 const pdf = args.pdf;
@@ -172,8 +182,8 @@ try {
   await fs.writeFile(path.resolve(pdf), Buffer.from(printed.data, 'base64'));
   const reportPath = path.join(path.dirname(path.resolve(pdf)), 'layout-report.json');
   await fs.writeFile(reportPath, `${JSON.stringify({
-    source: path.resolve(html),
-    pdf: path.resolve(pdf),
+    source: displayPath(html),
+    pdf: displayPath(pdf),
     createdAt: new Date().toISOString(),
     outlineSections: outlineValue.sections,
     outlineItems: outlineValue.items.length,
@@ -182,7 +192,7 @@ try {
   if (outlinePath) {
     await fs.mkdir(path.dirname(outlinePath), { recursive: true });
     await fs.writeFile(outlinePath, `${JSON.stringify({
-      source: path.resolve(html),
+      source: displayPath(html),
       sections: outlineValue.sections,
       title: outlineValue.title,
       items: outlineValue.items,

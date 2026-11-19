@@ -13,6 +13,8 @@ import os
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 from pypdf import PdfReader, PdfWriter
 
 MAX_BOOKMARKS = 500
@@ -146,9 +148,9 @@ def main() -> int:
         write_pdf(reader, writer, out_path)
         report = {
             **result,
-            "sourcePdf": str(args.pdf.resolve()),
-            "outputPdf": str(out_path.resolve()),
-            "outline": str(args.outline.resolve()),
+            "sourcePdf": display(args.pdf),
+            "outputPdf": display(out_path),
+            "outline": display(args.outline),
             "outlineSource": source,
             "sections": sections,
             "pages": pages,

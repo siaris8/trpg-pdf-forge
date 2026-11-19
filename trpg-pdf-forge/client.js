@@ -7,7 +7,7 @@ window.__ModuleLoader__.load({
     const NS = 'trpg-studio';
     const API = '/api/trpg-studio';
     const SHEET_API = '/api/trpg-sheets';
-    const FALLBACK_VERSION = '2.2.0';
+    const FALLBACK_VERSION = '3.0.1';
     const MAX_PDF = 150 * 1024 * 1024;
 
     const zh = {
@@ -29,6 +29,7 @@ window.__ModuleLoader__.load({
       statusChanges: '要修改',
       statusApproved: '已通过',
       statusBatches: '分批翻译/校对',
+      statusTitle: '核验书名',
       statusBuild: '待构建全篇',
       statusFull: '全篇完成',
       statusDone: '已完成',
@@ -62,6 +63,12 @@ window.__ModuleLoader__.load({
       assets: '补充图片（可选）',
       assetsHint: '图标、地图、插图；关键插图会优先嵌入，小图标不逐一嵌入。PNG / JPEG / WebP，最多 8 张。',
       titleLabel: '书名',
+      originalTitle: '原名',
+      bookTitle: '书名核验',
+      titleVerified: '已核验',
+      titleDraft: '待核验',
+      verifyTitle: '核验书名',
+      titleSourcePages: '来源页',
       titlePlaceholder: '默认使用 PDF 文件名',
       advanced: '语言与风格',
       sourceLang: '源语言',
@@ -257,6 +264,7 @@ window.__ModuleLoader__.load({
       actionRevise: '复制修改指令',
       actionFix: '先修复问题',
       actionProof: '开始校对',
+      actionTitle: '核验书名',
       actionAuto: '开始全篇（自动分批 + 校对）',
       actionBuild: '构建全篇',
       actionNone: '已交付',
@@ -281,6 +289,7 @@ window.__ModuleLoader__.load({
       statusChanges: 'Changes',
       statusApproved: 'Approved',
       statusBatches: 'Batches / proof',
+      statusTitle: 'Verify title',
       statusBuild: 'Ready to build',
       statusFull: 'Full book',
       statusDone: 'Done',
@@ -314,6 +323,12 @@ window.__ModuleLoader__.load({
       assets: 'Extra images (optional)',
       assetsHint: 'Icons, maps, illustrations; key art is embedded first, small icons are not all embedded. PNG / JPEG / WebP, up to 8.',
       titleLabel: 'Title',
+      originalTitle: 'Original title',
+      bookTitle: 'Book title',
+      titleVerified: 'Verified',
+      titleDraft: 'Needs verification',
+      verifyTitle: 'Verify title',
+      titleSourcePages: 'Source pages',
       titlePlaceholder: 'Defaults to the PDF file name',
       advanced: 'Language and style',
       sourceLang: 'Source language',
@@ -509,6 +524,7 @@ window.__ModuleLoader__.load({
       actionRevise: 'Copy revision brief',
       actionFix: 'Fix issues first',
       actionProof: 'Start proofreading',
+      actionTitle: 'Verify title',
       actionAuto: 'Start full book (batches + proof)',
       actionBuild: 'Build book',
       actionNone: 'Delivered',
@@ -837,6 +853,7 @@ window.__ModuleLoader__.load({
         changes: 'statusChanges',
         approved: 'statusApproved',
         batches: 'statusBatches',
+        title: 'statusTitle',
         build: 'statusBuild',
         full: 'statusFull',
         done: 'statusDone',
@@ -846,7 +863,7 @@ window.__ModuleLoader__.load({
 
     function statusTone(status) {
       if (status === 'done' || status === 'full' || status === 'approved') return 'success';
-      if (status === 'pass1' || status === 'changes' || status === 'batches' || status === 'build') return 'warn';
+      if (status === 'pass1' || status === 'changes' || status === 'batches' || status === 'title' || status === 'build') return 'warn';
       if (status === 'warning') return 'danger';
       return '';
     }
@@ -1098,6 +1115,7 @@ window.__ModuleLoader__.load({
               title,
               sourceLang: draft.sourceLang,
               targetLang: draft.targetLang,
+              titlePolicy: 'strict',
               glossaryMode: draft.glossaryMode,
               options: {
                 style: draft.style,
@@ -1579,6 +1597,28 @@ window.__ModuleLoader__.load({
       );
     }
 
+    function TitleCard({ t, project, busy, copyPrompt }) {
+      const title = project.files?.title || null;
+      const strict = project.titlePolicy === 'strict';
+      if (!title && !strict) return null;
+      const verified = title?.status === 'verified' && title?.verifiedAfterRead === true;
+      return h('section', { className: 'trpg-card', style: { marginTop: 12 } },
+        h('div', { className: 'trpg-card-head' },
+          h('div', { className: 'trpg-card-title' }, t('bookTitle')),
+          h('span', { className: `trpg-badge ${verified ? 'success' : 'warn'}` }, verified ? t('titleVerified') : t('titleDraft')),
+        ),
+        h('div', { className: 'trpg-summary' },
+          h('div', null, h('span', null, t('titleLabel')), h('span', null, project.title || '—')),
+          h('div', null, h('span', null, t('originalTitle')), h('span', null, title?.titleOriginal || project.titleOriginal || '—')),
+          title?.sourcePages?.length ? h('div', null, h('span', null, t('titleSourcePages')), h('span', null, title.sourcePages.join(', '))) : null,
+          title?.rationale ? h('div', null, h('span', null, t('sheetNotes')), h('span', null, title.rationale)) : null,
+        ),
+        !verified && project.prompts?.title ? h('div', { style: { display: 'flex', gap: 7, marginTop: 10, flexWrap: 'wrap' } },
+          h('button', { type: 'button', className: 'trpg-btn small primary', disabled: busy, onClick: () => copyPrompt(project.prompts.title) }, t('verifyTitle')),
+        ) : null,
+      );
+    }
+
     function StepBar({ t, workflow, status }) {
       const step = Number.isFinite(workflow?.step) ? workflow.step : 0;
       const items = [
@@ -1631,6 +1671,7 @@ window.__ModuleLoader__.load({
           h('div', { style: { minWidth: 0 } },
             h('div', { className: 'trpg-kicker' }, t('project')),
             h('h1', { style: { margin: 0, fontSize: 24, lineHeight: 1.25 } }, project.title),
+            project.titleOriginal ? h('div', { className: 'trpg-meta', style: { marginTop: 3 } }, `${t('originalTitle')}：${project.titleOriginal}`) : null,
             h('div', { style: { display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 7 } },
               h('span', { className: `trpg-badge ${statusTone(status)}` }, t(statusKey(status))),
               h('span', { className: 'trpg-meta' }, project.source?.bytes ? `${t('sourceReady')} · ${formatBytes(project.source.bytes)}` : t('missingSource')),
@@ -1647,6 +1688,7 @@ window.__ModuleLoader__.load({
           ),
         ),
         h(WorkflowCard, { t, workflow: project.workflow, busy, onRefreshTask: () => onRefreshTask?.(project) }),
+        h(TitleCard, { t, project, busy, copyPrompt }),
         h(StepBar, { t, workflow: project.workflow, status }),
         (files.progress || ['auto', 'proof', 'build'].includes(project.workflow?.next?.action)) ? (() => {
           const progress = files.progress || { translated: 0, total: 0, proofed: 0, proofTotal: 0, percent: 0, batches: [], batchCount: 0, current: null };

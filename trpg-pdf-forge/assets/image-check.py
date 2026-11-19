@@ -11,6 +11,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 try:
     import pymupdf as fitz
 except ImportError:  # pragma: no cover
@@ -63,7 +65,7 @@ def main() -> int:
     for target in args.targets:
         doc = fitz.open(target)
         images = unique_images(doc)
-        target_images[str(target)] = len(images)
+        target_images[display(target)] = len(images)
         target_total += len(images)
     required = min(args.min_target, len(source_usable)) if source_usable else 0
     zero_allowed = len(source_usable) == 0
@@ -79,7 +81,7 @@ def main() -> int:
     result = {
         "ok": ok,
         "zeroAllowed": zero_allowed,
-        "source": str(args.source.resolve()),
+        "source": display(args.source),
         "sourceImages": len(source_images),
         "sourceUsableIllustrations": len(source_usable),
         "sourcePageScans": source_page_scans,

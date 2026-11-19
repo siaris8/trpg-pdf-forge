@@ -31,6 +31,7 @@ RANK = re.compile(rf"\s*(?:{ROMAN}|\d+\s*[-–]\s*\d+|{ROMAN}\s*[-–]\s*{ROMAN}
 ALLOWED_CATEGORIES = {
     "title", "term", "check", "stat", "mechanic", "chapter", "section",
     "archetype", "schtick", "skill", "dice", "faction", "path", "spell", "weapon",
+    "name", "place", "organization",
 }
 CATEGORY_HINTS = [
     ("枪械特技", "schtick"),
@@ -274,6 +275,26 @@ def audit_terms(root, specs: list[dict], glossary_path: Path, source_map: dict |
             "termLists": sum(1 for spec in specs for _ in term_lists(spec)),
             "missingTerms": len(candidates),
         },
+    }
+
+
+def summarize_terms(result: dict) -> dict:
+    """Compact term result for Agent/UI; full details stay in TERM-QA.json."""
+    errors = list(result.get("errors") or [])
+    warnings = list(result.get("warnings") or [])
+    missing = list(result.get("missing") or [])
+    return {
+        "schemaVersion": 1,
+        "ok": bool(result.get("ok")),
+        "stats": result.get("stats") or {},
+        "errorCount": len(errors),
+        "warningCount": len(warnings),
+        "topErrors": errors[:5],
+        "topWarnings": warnings[:3],
+        "missing": [
+            {"source": item.get("source"), "file": item.get("file"), "path": item.get("path")}
+            for item in missing[:10]
+        ],
     }
 
 

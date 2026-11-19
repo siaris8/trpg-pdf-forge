@@ -7,6 +7,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 try:
     import pymupdf as fitz
 except ImportError:  # pragma: no cover
@@ -55,7 +57,7 @@ def inspect(pdf: Path, require_bookmarks: bool = False) -> dict:
         and len(unembedded) == 0
         and pages > 0
         and (bookmarks > 0 or not require_bookmarks),
-        "file": str(pdf.resolve()),
+        "file": display(pdf),
         "pages": pages,
         "width": round(first.width, 2),
         "height": round(first.height, 2),

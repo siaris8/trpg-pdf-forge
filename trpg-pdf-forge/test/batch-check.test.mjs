@@ -80,6 +80,10 @@ test('batch-check passes a complete batch and updates progress', async () => {
     const check = JSON.parse(await fs.readFile(path.join(dir, 'work', 'batches', 'b00', 'CHECK.json'), 'utf8'));
     assert.equal(check.ok, true);
     assert.equal(check.covered, 2);
+    const summary = JSON.parse(await fs.readFile(path.join(dir, 'work', 'batches', 'b00', 'CHECK-SUMMARY.json'), 'utf8'));
+    assert.equal(summary.ok, true);
+    assert.equal(summary.errorCount, 0);
+    assert.deepEqual(summary.pages, [1, 2]);
     const progress = JSON.parse(await fs.readFile(path.join(dir, 'work', 'progress.json'), 'utf8'));
     assert.equal(progress.translated, 2);
     assert.equal(progress.current, 'b01');

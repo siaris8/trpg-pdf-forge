@@ -1,11 +1,32 @@
 TRPG 翻译工坊 · 插件测试包
-版本：2.2.0 / 2026-11-16
+版本：3.0.1 / 2026-11-19
 
 这个包是 DeepSeek Harness 的插件源码目录。
 压缩包内：
 - trpg-pdf-forge/       插件目录（安装这个）
 - sheet-demo-project/   Excel 示例（xlsx + plan + QA + preview）
 - README-FIRST.txt      本说明
+
+版本 3.0.1：去掉机器路径与旧项目残留 + 测试包归档
+- 报告类 JSON（*-qa.json、IMAGE-CHECK.json、manifest.json、BOOKMARKS.json、LAYOUT.json）只记相对路径，不再写本机绝对路径。
+- 新增 assets/reportpath.py；check-pdf / image-check / extract-images / bookmarks / merge-pdf / layout-check / sheet-check / sheet-extract / export-glossary / render-pdf 全部改用相对路径。
+- 清理示例产物、文档和测试里的旧工作区路径与旧项目名；示例书签/QA 文件不再指向作者本机目录。
+- 测试包每次按版本重新生成，旧压缩包自动移入 oldversion/。
+- 测试 81 项。
+
+版本 3.0.0：书名权威 + 译名一致性
+- 新增 work/TITLE.json、title.py init/check/apply；全篇完成后 title-review 核验书名。
+- 新项目 strict：书名未 verified 不能 build；旧项目 legacy 不强制迁移。
+- 封面/页眉/TOC/书签/报告/glossary 使用同一 titleZh；旧书名残留会失败。
+- glossary 增加 name/place/organization/title 类别；name-check.py 检查冲突。
+- 测试 81 项。
+
+版本 2.3.0：成本优先的批次上下文
+- 每批使用全新 subagent；主会话只保留 CHECK-SUMMARY，不保留页全文。
+- 正文默认不读整页图，只有表格/图文/文本缺失才读，每批 ≤2 张。
+- 整批写一个 pages-bundle，再 split-bundle 拆分。
+- 新增 STYLE-MINI / BATCH-PROTOCOL / CHECK-SUMMARY / TERM-SUMMARY。
+- 每 10 页目标 ≤30 steps、≤20 工具调用；测试 78 项。
 
 版本 2.2.0：波兰语源
 - 新增 sourceLang=pl：波兰语原文 → 中文；保留 ą ć ę ł ń ó ś ź ż。
@@ -23,7 +44,7 @@ TRPG 翻译工坊 · 插件测试包
 - 车卡项目自动检测 Quickstart/模组预设角色，输出 out/pregens.xlsx 或 out/pregens/ 多文件 + 索引。
 - 预设卡（pregen-pc）与 NPC 分开标记，不混入空白「人物卡」。
 - 新增德语源 → 中文：sourceLang=de、保留 ä ö ü ß、德语术语表和校对清单。
-- TASK_VERSION 9 / SHEET_TASK_VERSION 4；测试 72 项。
+- TASK_VERSION 10 / SHEET_TASK_VERSION 4；测试 72 项。
 
 版本 2.0.1：提示词去项目残留
 - 移除提示词/文档中的旧项目页数、固定页段和具体案例；改为按 survey.totalPages / 总页数动态处理。
@@ -87,7 +108,7 @@ TRPG 翻译工坊 · 插件测试包
 版本 1.6.1：维护版（功能与 1.6.0 相同）
 - 版本号只从 package.json 读取，index.js / client.js / README 不再各存一份。
 - Python 辅助脚本设置 PYTHONDONTWRITEBYTECODE=1，不再往 assets/ 写 __pycache__。
-- test/make-demo-project.mjs 不再写死旧工作区路径，支持命令行参数和 TRPG_STUDIO_ROOT。
+- test/make-demo-project.mjs 不再写死绝对路径，支持命令行参数和 TRPG_STUDIO_ROOT。
 - 测试包不再打包含 __pycache__。
 
 版本 1.6.0：Excel 人物卡版式重做
@@ -102,7 +123,7 @@ TRPG 翻译工坊 · 插件测试包
 1. 解压整个 zip。
 2. DeepSeek Harness → 设置 → 插件 → 从本地目录安装。
 3. 选择 trpg-pdf-forge 文件夹（不要只选 zip）。
-4. 重启 DSH；标题旁应显示 v2.2.0。
+4. 重启 DSH；标题旁应显示 v3.0.1。
 5. 侧栏两个入口：PDF 翻译、Excel 车卡 · 实验。
 6. 打开工坊应能看到以前工作区里的旧项目（标「其他工作区」）；删除后可在左侧垃圾桶恢复。
 
@@ -114,7 +135,7 @@ Excel 快速测试
 5. 示例：sheet-demo-project/sheet-demo.xlsx；空白模板：trpg-pdf-forge/assets/sheet-template.xlsx。
 
 检查
-- node --test test/*.test.mjs：76 项通过。
+- node --test test/*.test.mjs：81 项通过。
 - sheet-demo：版式 100 分、27 公式、10 命名区域、3 步骤。
 - 无公式副本仍通过（公式可选）。
 - 取消标题合并/打印区域会失败（版式门禁）。
@@ -128,6 +149,8 @@ Excel 快速测试
 开发者：希亚蕾丝
 内部包名：@local/mystery-atelier-ui
 界面名称：TRPG 翻译工坊
+
+
 
 
 

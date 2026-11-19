@@ -3,7 +3,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { deriveWorkflow, reviewGate } from '../server/workflow.mjs';
 
-const source = { source: true, taskVersion: 9 };
+const source = { source: true, taskVersion: 10 };
 const pass1 = {
   ...source,
   previewPdf: true, previewPng: true, hardPdf: true, hardPng: true, contact: true,
@@ -135,7 +135,7 @@ test('task briefs stay scoped to their phase', async () => {
   const dir = path.join('C:', 'tmp', 'trpg-task-test');
   const project = { title: '任务测试', source: { path: 'source/source.pdf' }, options: {} };
   const p1 = buildTask(project, dir, 'pass1');
-  assert.match(p1, /TASK_VERSION: 9/);
+  assert.match(p1, /TASK_VERSION: 10/);
   assert.match(p1, /preview-qa\.json/);
   assert.match(p1, /layout-check\.py/);
   assert.ok(!p1.includes('merge-pdf.py'));

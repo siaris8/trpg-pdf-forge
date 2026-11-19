@@ -121,7 +121,7 @@ test('discovery merges registry, session cwd, explicit legacy bases and persists
 
 test('decodes DSH session directory names back to workspace paths', () => {
   if (process.platform !== 'win32') return;
-  assert.equal(decodeSessionWorkspaceName('--D-~793A~4F8B~9879~76EE--'), 'D:\\示例项目');
+  assert.equal(decodeSessionWorkspaceName('--D-~9879~76EE--'), 'D:\\项目');
   assert.equal(decodeSessionWorkspaceName('--D-fengshui--'), 'D:\\fengshui');
   assert.equal(decodeSessionWorkspaceName('not-a-session'), null);
 });

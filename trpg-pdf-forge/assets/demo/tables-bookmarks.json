@@ -15,10 +15,10 @@
       "page": 2
     }
   ],
-  "sourcePdf": "assets\\demo\\tables-raw.pdf",
-  "outputPdf": "assets\\demo\\tables.pdf",
-  "outline": "assets\\demo\\tables-outline.json",
-  "outlineSource": "assets\\demo\\tables.html",
+  "sourcePdf": "assets/demo/tables-raw.pdf",
+  "outputPdf": "assets/demo/tables.pdf",
+  "outline": "assets/demo/tables-outline.json",
+  "outlineSource": "assets/demo/tables.html",
   "sections": 2,
   "pages": 2
 }

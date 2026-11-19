@@ -8,6 +8,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 HEADERS = ["source", "target", "category", "notes", "locked"]
 EMPTY_CATEGORY = "未分类"
 
@@ -94,9 +96,9 @@ def main() -> int:
     write_markdown(rows, args.md, source)
     result = {
         "ok": True,
-        "source": str(source.resolve()),
-        "csv": str(args.csv.resolve()),
-        "markdown": str(args.md.resolve()),
+        "source": display(source),
+        "csv": display(args.csv),
+        "markdown": display(args.md),
         "entries": len(rows),
         "categories": len({row["category"] or EMPTY_CATEGORY for row in rows}),
         "locked": sum(1 for row in rows if row["locked"] == "1"),

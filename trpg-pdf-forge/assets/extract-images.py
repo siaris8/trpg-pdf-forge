@@ -12,6 +12,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 try:
     import pymupdf as fitz
 except ImportError:  # pragma: no cover
@@ -98,7 +100,7 @@ def main() -> int:
             by_digest[digest] = record
     records = sorted(by_digest.values(), key=lambda item: (item["pages"][0], -item["width"] * item["height"]))
     manifest = {
-        "source": str(args.pdf.resolve()),
+        "source": display(args.pdf),
         "images": records,
         "counts": {
             "total": len(records),

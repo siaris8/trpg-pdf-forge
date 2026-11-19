@@ -78,7 +78,7 @@
 
 ## 任务书
 
-- `TASK.md` 头部有 `TASK_VERSION: 9`。
+- `TASK.md` 头部有 `TASK_VERSION: 10`。
 - Pass 1 只包含两页命令、两页 QA、图片守卫、表格计划；不包含全篇命令/交付。
 - Revision 只包含两页修改和 `REVIEW.json` 意见。
 - Full 只包含全篇构建、渲染、书签、QA、图片、表格计划、报告/术语表；不再包含逐页翻译。

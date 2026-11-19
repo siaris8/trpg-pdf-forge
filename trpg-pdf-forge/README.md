@@ -1,9 +1,15 @@
 # TRPG 翻译工坊
 
-当前版本：**2.2.0**（插件页标题旁会显示版本号）
+当前版本：**3.0.1**（插件页标题旁会显示版本号）
 
 开发者：**希亚蕾丝**
 
+> 3.0.1：**去掉机器路径与旧项目残留 + 测试包归档**——所有报告类 JSON（`*-qa.json`、`IMAGE-CHECK.json`、`manifest.json`、`BOOKMARKS.json`、`LAYOUT.json`）只记录相对路径，不再写入本机绝对路径（新增 `assets/reportpath.py`）；清理示例产物、文档与测试里的旧工作区/旧项目名；测试包每次按版本新生成，旧包自动归档到 `oldversion/`。
+>
+> 3.0.0：**书名权威 + 译名一致性**——`work/TITLE.json`、完成全篇后的 `title-review`、`title.py check --require-verified`；glossary title/name/place/organization 冲突检查；新项目启用 strict 书名门禁。
+>
+> 2.3.0：**成本优先的批次上下文**——每批新 subagent、正文默认不读图、整批 bundle、STYLE-MINI、BATCH-PROTOCOL、CHECK/TERM 摘要、术语子集与步骤预算。
+>
 > 2.2.0：新增**波兰语源 → 中文**（`sourceLang=pl`，保留 ą ć ę ł ń ó ś ź ż、波兰语术语表/预设卡关键词/校对清单），并清理德语/波兰语提示词的编码问题。
 >
 > 2.1.1：修复**无关工作区被创建 `trpg-projects` / `trpg-sheets` 空目录**；`/info` 改为只读，只有真正新建项目时才建目录，并清理已产生的空根。
@@ -56,19 +62,22 @@
 1. 解压插件测试包，得到 `trpg-pdf-forge/` 文件夹。**不要只把 zip 文件选进插件管理器。**
 2. 打开 DeepSeek Harness → 设置 → 插件 → 从本地目录安装，选择 `trpg-pdf-forge/`。
 3. 重启 DSH；左侧栏应出现「翻译工坊」。
-4. 打开工坊，标题旁应显示 `v2.2.0`；Excel 车卡面板也会显示 `BETA`。PDF 流程可上传 `trpg-pdf-forge/assets/demo/source.en.pdf` 测试。
+4. 打开工坊，标题旁应显示 `v3.0.1`；Excel 车卡面板也会显示 `BETA`。PDF 流程可上传 `trpg-pdf-forge/assets/demo/source.en.pdf` 测试。
 
 测试设备需要 DSH 桌面版；PDF 打印使用本机 Chrome/Edge；Python 辅助脚本通过 `run-python.mjs` 自动寻找 DSH 自带运行时。不要手动改 profile 的 `package.json`，也不要在 profile 里跑 `pnpm install`。
 
 ### 本机
 
-当前桌面 profile 已经有一个指向本目录的 bundle 链接，但需要重启 DSH 才会加载新的 Host/Client：
+当前桌面 profile 已把 `@local/mystery-atelier-ui` 链接到本目录，DSH 直接从工作区加载这个插件，没有第二份拷贝要同步：
 
-1. 关闭并重新打开 DeepSeek Harness（或重启应用）。
-2. 左侧栏应出现「翻译工坊」。
-3. 如果没出现：设置 → 插件 → 从本地目录安装，目录选本目录。
+| 改动 | 生效方式 |
+|---|---|
+| `client.js`（界面） | 刷新 DSH 页面 |
+| `index.js`、`server/*.mjs`（Host） | 重启 DeepSeek Harness |
+| `assets/*.py`、`assets/*.mjs` | 下一次调用即生效 |
+| `assets/theme.css`、模板 | 下次生成页面时生效 |
 
-内部包名保留为 `@local/mystery-atelier-ui`，这是为了复用 profile 里已有的 bundle 链接；界面标题和元数据是「TRPG 翻译工坊」。
+内部包名保留为 `@local/mystery-atelier-ui`；界面标题和元数据是「TRPG 翻译工坊」。
 
 ## 使用
 

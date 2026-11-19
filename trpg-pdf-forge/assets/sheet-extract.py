@@ -9,6 +9,8 @@ import re
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 from langlib import normalize_text, pregen_keywords, resolve
 
 HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.+?)\s*$")
@@ -83,7 +85,7 @@ def extract_structured(path: Path, lang: str) -> dict:
             section["page"] = next((item["page"] for item in pages if probe in item["text"]), None)
     return {
         "schemaVersion": 1,
-        "source": str(path.resolve()),
+        "source": display(path),
         "lang": resolve(lang)["code"],
         "text": text,
         "pages": pages,
@@ -109,7 +111,7 @@ def main() -> int:
             return 2
         text = brief.read_text(encoding="utf-8-sig")
         structured = {
-            "schemaVersion": 1, "source": str(brief.resolve()), "lang": resolve(args.lang)["code"],
+            "schemaVersion": 1, "source": display(brief), "lang": resolve(args.lang)["code"],
             "text": normalize_text(text, args.lang), "pages": [], "sections": _sections_from_text(text, args.lang), "tables": [],
         }
     args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -14,9 +14,10 @@ export const PHASES = {
   changes: { label: '要修改', step: 2 },
   approved: { label: '已通过', step: 3 },
   batches: { label: '分批翻译/校对', step: 3 },
-  build: { label: '待构建全篇', step: 4 },
-  full: { label: '全篇交付中', step: 4 },
-  done: { label: '已完成', step: 5 },
+  title: { label: '核验书名', step: 4 },
+  build: { label: '待构建全篇', step: 5 },
+  full: { label: '全篇交付中', step: 5 },
+  done: { label: '已完成', step: 6 },
 };
 
 const PASS1_REQUIRED = [
@@ -130,7 +131,7 @@ export function deriveWorkflow(project, files) {
   if (phase === 'full' && !approved) {
     issues = [{ code: 'book-before-approval', message: '全篇 PDF 已存在，但两页尚未审核通过', file: 'out/book.pdf' }];
   }
-  if (phase !== 'draft' && files.taskVersion !== undefined && files.taskVersion < 9) {
+  if (phase !== 'draft' && files.taskVersion !== undefined && files.taskVersion < 10) {
     issues.push({ code: 'task-version', message: '任务书版本过旧，请刷新任务书', file: 'TASK.md' });
   }
   const progress = files.progress || null;
@@ -147,6 +148,14 @@ export function deriveWorkflow(project, files) {
   }
   if (phase === 'approved' && progress && batchesDone) phase = 'build';
   if (phase === 'approved' && progress && !batchesDone) phase = 'batches';
+  const title = files.title || null;
+  const titlePolicy = project.titlePolicy || 'legacy';
+  const titleVerified = Boolean(title && title.status === 'verified' && title.verifiedAfterRead === true
+    && files.titleQa?.ok === true && (!files.nameQa || files.nameQa.ok !== false));
+  if (titlePolicy === 'strict' && !titleVerified && phase === 'build') {
+    issues.push({ code: 'title-unverified', message: '书名尚未核验；读完封面/目录/章节后运行 title-review', file: 'work/TITLE.json' });
+    phase = 'title';
+  }
 
   const health = issues.length > 0 ? 'warning' : 'ok';
   let next = null;
@@ -158,7 +167,8 @@ export function deriveWorkflow(project, files) {
   else if (phase === 'batches') {
     const current = progress?.batches?.find((item) => item.id === progress.current) || null;
     next = makeNext('auto', current ? `继续 ${current.id}（${current.proofed ? '已校对' : '待校对'}）` : '继续自动分批');
-  } else if (phase === 'build') next = makeNext('build', '所有批次已校对，构建全篇');
+  } else if (phase === 'title') next = makeNext('title', '全篇已翻完，核验书名');
+  else if (phase === 'build') next = makeNext('build', '所有批次已校对，构建全篇');
   else if (phase === 'full') next = issues.length ? makeNext('fix', '补齐全篇交付') : makeNext('none', '已交付');
 
   const gates = [
@@ -167,6 +177,7 @@ export function deriveWorkflow(project, files) {
     { id: 'term', status: term ? (term.ok ? 'pass' : 'fail') : 'pending', issues: term?.errors?.slice(0, 5) || [] },
     { id: 'proof', status: progress ? (proofed >= proofTotal && proofTotal > 0 ? 'pass' : 'fail') : 'pending', issues: progress && proofed < proofTotal ? [`未校对 ${proofTotal - proofed}/${proofTotal} 批`] : [] },
     { id: 'batch', status: progress ? (batchesDone ? 'pass' : 'pending') : 'pending', issues: progress && progress.current ? [`当前批次 ${progress.current}`] : [] },
+    { id: 'title', status: titlePolicy === 'strict' ? (titleVerified ? 'pass' : 'fail') : 'pending', issues: titleVerified ? [] : ['书名待核验'] },
     { id: 'final', status: phase === 'done' ? 'pass' : (phase === 'full' ? 'fail' : 'pending'), issues: finalIssues(files).map((item) => item.message) },
   ];
 

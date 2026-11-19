@@ -20,6 +20,8 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+from reportpath import display
+
 from batchlib import read_json, write_json
 
 
@@ -398,7 +400,7 @@ def main() -> int:
 
     result = {
         "version": 2,
-        "source": str(args.pdf),
+        "source": display(args.pdf),
         "totalPages": total,
         "textLayer": any(row["chars"] > 80 for row in auto_pages),
         "auditScope": "全量自动结构扫描（source-map.py v2）；手工 blocks/表/图保留，自动条目 source=auto。",

@@ -11,7 +11,7 @@ from pathlib import Path
 from batchlib import compute_progress, load_page_sources, read_json, write_json
 from pageio import load_specs
 from prooflib import proof_status
-from termlib import audit_terms
+from termlib import audit_terms, summarize_terms
 from textlib import audit_specs
 
 HERE = Path(__file__).resolve().parent
@@ -142,6 +142,24 @@ def main() -> int:
         target_dir = root / "work" / "batches" / batch["id"]
         target_dir.mkdir(parents=True, exist_ok=True)
         write_json(target_dir / "CHECK.json", check)
+        write_json(target_dir / "CHECK-SUMMARY.json", {
+            "schemaVersion": 1,
+            "ok": check["ok"],
+            "batch": batch["id"],
+            "pages": [start, end],
+            "missing": missing,
+            "errorCount": len(errors),
+            "warningCount": len(warnings),
+            "topErrors": errors[:5],
+            "topWarnings": warnings[:3],
+            "term": summarize_terms(term_audit),
+            "proof": {
+                "ok": proof["ok"],
+                "stale": proof["stale"],
+                "reviewer": proof["reviewer"],
+            },
+            "updatedAt": check["updatedAt"],
+        })
         status = "OK" if check["ok"] else "FAIL"
         print(f"{status} {batch['id']} {batch.get('title', '')}：{len(covered)}/{len(pages)} 页")
         if missing:
@@ -159,6 +177,7 @@ def main() -> int:
         full_term["schemaVersion"] = 2
         full_term["generatedAt"] = datetime.now(timezone.utc).isoformat()
         write_json(root / "work" / "TERM-QA.json", full_term)
+        write_json(root / "work" / "TERM-SUMMARY.json", summarize_terms(full_term))
     print(f"进度：{progress['translated']}/{progress['total']}（{round(progress['percent'] * 100)}%），"
           f"已校 {progress['proofed']}/{progress['proofTotal']}，当前 {progress['current']}")
     if args.all and progress["gaps"]:

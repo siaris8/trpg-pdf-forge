@@ -11,6 +11,8 @@ import json
 import sys
 from pathlib import Path
 
+from reportpath import display
+
 from pypdf import PdfReader, PdfWriter
 
 from bookmarks import add_outline, read_outline
@@ -71,10 +73,10 @@ def main() -> int:
             writer.write(stream)
         report = {
             **outline,
-            "sourcePdf": str(args.out.resolve()),
-            "cover": str(args.cover.resolve()),
-            "body": str(args.body.resolve()),
-            "outline": str(args.outline.resolve()) if args.outline else None,
+            "sourcePdf": display(args.out),
+            "cover": display(args.cover),
+            "body": display(args.body),
+            "outline": display(args.outline) if args.outline else None,
             "outlineSource": outline_source,
             "coverPages": cover_pages,
             "bodyPages": body_pages,

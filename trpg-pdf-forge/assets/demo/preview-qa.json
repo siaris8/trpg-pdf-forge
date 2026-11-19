@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "file": "assets\\demo\\preview.pdf",
+  "file": "assets/demo/preview.pdf",
   "pages": 1,
   "width": 594.96,
   "height": 841.92,
@@ -11,6 +11,11 @@
     }
   ],
   "type3": 0,
+  "bookmarks": 0,
+  "bookmarksRequired": false,
+  "bookmarkDepth": 0,
+  "bookmarkItems": [],
+  "pageMode": null,
   "fonts": [
     {
       "basefont": "AAAAAA+MicrosoftYaHei-Bold",
@@ -39,7 +44,7 @@
   ],
   "embeddedFonts": 3,
   "unembeddedFonts": 0,
-  "textChars": 588,
+  "textChars": 584,
   "images": 1,
-  "bytes": 190643
+  "bytes": 190258
 }
